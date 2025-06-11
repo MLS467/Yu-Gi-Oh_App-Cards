@@ -1,10 +1,13 @@
+import { styles } from "@/app/styles";
 import { colors } from "@/constants/Colors";
-import { styles } from "@/styles/SingIn";
+import { Link, useRouter } from "expo-router";
 import React, { useState } from "react";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 const Index = () => {
+  const router = useRouter();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
@@ -48,12 +51,27 @@ const Index = () => {
         </Button>
       </View>
 
-      <TouchableOpacity activeOpacity={0.7} style={styles.btnRegister}>
+      <TouchableOpacity
+        onPress={() => router.navigate("/Sign-Up")}
+        activeOpacity={0.7}
+        style={styles.btnRegister}
+      >
         <Text style={styles.textRegister}>
           Não tem uma conta?{" "}
           <Text style={{ color: colors.light[200] }}>Cadastre-se</Text>
         </Text>
       </TouchableOpacity>
+
+      <Link href={"/Home" as any} asChild>
+        <TouchableOpacity
+          onPress={() => (
+            <Text style={{ color: "#fff", padding: 20 }}>rota lista</Text>
+          )}
+          activeOpacity={0.7}
+        >
+          <Text style={{ color: "#fff", padding: 20 }}>rota lista</Text>
+        </TouchableOpacity>
+      </Link>
     </View>
   );
 };
