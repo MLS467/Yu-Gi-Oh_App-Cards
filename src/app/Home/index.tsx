@@ -29,12 +29,14 @@ const Home = () => {
       <FlatList
         data={data_list}
         keyExtractor={(item) => item.id}
+        numColumns={2}
         renderItem={({ item }) => (
           <CardComponent item={item.name} img={require("@/assets/folha.png")}>
             {item.name}
           </CardComponent>
         )}
         contentContainerStyle={styles.cardList}
+        columnWrapperStyle={{ justifyContent: "space-evenly" }}
       />
     </View>
   );

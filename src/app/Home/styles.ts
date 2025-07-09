@@ -1,7 +1,7 @@
 import { colors } from "@/constants/Colors";
 import { StyleSheet } from "react-native";
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: colors.dark[950],
@@ -23,10 +23,10 @@ export const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   cardList: {
-    flexDirection: "row",
-    justifyContent: "space-evenly",
-    flexWrap: "wrap",
-    gap: 10,
     paddingHorizontal: 20,
+    gap: 10,
   },
 });
+
+export default styles;
+export { styles };

@@ -1,22 +1,37 @@
 import { styles } from "@/app/styles";
 import { colors } from "@/constants/Colors";
-import { Link, useRouter } from "expo-router";
+import { useAuth } from "@/Hook/useAuth";
+import { useRouter } from "expo-router";
 import React, { useState } from "react";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 
 const Index = () => {
   const router = useRouter();
+  const { signIn } = useAuth();
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const user = {
+    email: "teste@teste.com",
+    password: "teste123",
+  };
 
-  const handleSubmit = () => {
-    // Validate email and password
+  // const user = {
+  //   email: "test22e@teste.com",
+  //   password: "tes22te123",
+  // };
 
-    const data = { email, password };
+  const [email, setEmail] = useState(user.email);
+  const [password, setPassword] = useState(user.password);
 
-    console.log("Submitted Data:", data);
+  const handleSubmit = async () => {
+    try {
+      const userCredential = await signIn(email, password);
+
+      router.replace("/Home");
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      Alert.alert("Login", "Erro ao fazer login. Verifique suas credenciais.");
+    }
   };
 
   return (
@@ -31,6 +46,7 @@ const Index = () => {
           label="Email"
           value={email}
           onChangeText={(email) => setEmail(email)}
+          autoCapitalize="none"
           mode="outlined"
           style={{ margin: 16 }}
         />
@@ -39,6 +55,7 @@ const Index = () => {
           value={password}
           onChangeText={(password) => setPassword(password)}
           mode="outlined"
+          autoCapitalize="none"
           style={{ margin: 16 }}
         />
 
@@ -61,17 +78,6 @@ const Index = () => {
           <Text style={{ color: colors.light[200] }}>Cadastre-se</Text>
         </Text>
       </TouchableOpacity>
-
-      <Link href={"/Home" as any} asChild>
-        <TouchableOpacity
-          onPress={() => (
-            <Text style={{ color: "#fff", padding: 20 }}>rota lista</Text>
-          )}
-          activeOpacity={0.7}
-        >
-          <Text style={{ color: "#fff", padding: 20 }}>rota lista</Text>
-        </TouchableOpacity>
-      </Link>
     </View>
   );
 };
