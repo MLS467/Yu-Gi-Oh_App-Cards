@@ -6,6 +6,15 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  header: {
+    width: "100%",
+    // borderWidth: 1,
+    // borderColor: "red",
+    height: "auto",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 60,
+  },
   title: {
     color: colors.light[200],
     fontSize: 30,
@@ -23,8 +32,8 @@ const styles = StyleSheet.create({
     margin: 10,
   },
   logo: {
-    width: 150,
-    height: 150,
+    width: 300,
+    height: 100,
   },
   button: {
     borderRadius: 10,

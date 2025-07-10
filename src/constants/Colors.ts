@@ -1,31 +1,31 @@
 export const colors = {
   dark: {
-    100: "#d3d3d3",
-    200: "#b0b0b0",
-    300: "#8d8d8d",
-    400: "#6a6a6a",
-    500: "#505050",
-    600: "#3c3c3c",
-    700: "#2e2e2e",
-    800: "#1f1f1f",
-    900: "#141414",
-    950: "#0a0a0a",
+    100: "#dcdcdc", // texto claro
+    200: "#b8b8b8",
+    300: "#949494",
+    400: "#707070",
+    500: "#4c4c4c",
+    600: "#383838",
+    700: "#2a2a2a",
+    800: "#1c1c1c", // fundo principal
+    900: "#121212",
+    950: "#080808",
   },
   light: {
     100: "#ffffff",
-    200: "#f9f9f9",
-    300: "#f0f0f0",
-    400: "#e0e0e0",
-    500: "#d0d0d0",
-    600: "#bfbfbf",
-    700: "#a6a6a6",
-    800: "#8c8c8c",
-    900: "#737373",
-    950: "#5a5a5a",
+    200: "#f5f5f5",
+    300: "#ebebeb",
+    400: "#dddddd",
+    500: "#cccccc",
+    600: "#bbbbbb",
+    700: "#999999",
+    800: "#777777",
+    900: "#555555",
+    950: "#333333",
   },
-  fluorescentGreen: {
-    default: "#39ff14",
-    alt1: "#00ff99",
-    alt2: "#00ff66",
+  primary: {
+    default: "#b22222", // Vermelho escuro (Duel Monsters vibe)
+    alt1: "#ffcc00", // Dourado (detalhes)
+    alt2: "#6a0dad", // Roxo místico
   },
 };

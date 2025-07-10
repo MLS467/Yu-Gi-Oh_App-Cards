@@ -36,12 +36,12 @@ const Index = () => {
 
   return (
     <View style={styles.container}>
-      <View>
+      <View style={styles.header}>
         <Image style={styles.logo} source={require("@/assets/folha.png")} />
-        <Text style={styles.title}>Login</Text>
       </View>
 
       <View style={styles.form}>
+        <Text style={styles.title}>Login</Text>
         <TextInput
           label="Email"
           value={email}

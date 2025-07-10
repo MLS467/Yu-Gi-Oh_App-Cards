@@ -1,4 +1,3 @@
-import { useRouter } from "expo-router";
 import {
   createUserWithEmailAndPassword,
   signOut as firebaseSignOut,
@@ -12,18 +11,11 @@ import { auth } from "./firebase.config/Auth"; // Importando o auth do arquivo i
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
       setLoading(false);
-
-      if (user) {
-        router.replace("/Home");
-      } else {
-        router.replace("/");
-      }
     });
 
     return unsubscribe;
@@ -94,6 +86,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const value = {
     user,
+    setLoading,
     loading,
     signIn,
     signOut,
