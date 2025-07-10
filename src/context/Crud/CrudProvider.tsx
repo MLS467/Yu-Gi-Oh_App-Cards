@@ -67,10 +67,36 @@ const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
+  // Obter todas as cartas favoritas de um usuário
+  async function getUserFavoriteCards(userId: string) {
+    try {
+      const q = query(
+        collection(db, "favoriteCards"),
+        where("userId", "==", userId)
+      );
+
+      const querySnapshot = await getDocs(q);
+      const favoriteCards: any[] = [];
+
+      querySnapshot.forEach((doc) => {
+        favoriteCards.push({
+          id: doc.id,
+          ...doc.data(),
+        });
+      });
+
+      return { success: true, favoriteCards };
+    } catch (error) {
+      console.error("Erro ao buscar cartas favoritas:", error);
+      return { success: false, favoriteCards: [] };
+    }
+  }
+
   const crud = {
     favoriteCard,
     isCardFavorite,
     removeFavorite,
+    getUserFavoriteCards,
   };
 
   return (

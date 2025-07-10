@@ -4,35 +4,48 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark[950],
+    backgroundColor: colors.dark[800],
+    padding: 12,
+    paddingTop: 16,
   },
   header: {
     width: "100%",
     flexDirection: "row",
-    marginVertical: 30,
-    justifyContent: "space-between",
-    // borderWidth: 1,
-    // borderColor: "red",
+    marginVertical: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomWidth: 1,
+    borderBottomColor: colors.dark[600],
+    paddingBottom: 12,
   },
   arrowBack: {
     position: "absolute",
     left: 20,
   },
   title: {
-    width: "100%",
-    textAlign: "center",
     color: colors.light[200],
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: "bold",
+    textAlign: "center",
   },
   cardList: {
-    paddingHorizontal: 20,
-    gap: 50,
+    alignItems: "center",
+    justifyContent: "space-around",
+    width: "100%",
+    paddingBottom: 20,
   },
   cardContainer: {
-    height: "auto",
-    justifyContent: "space-between",
-    gap: 16,
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+
+    width: "100%",
+  },
+  columnWrapper: {
+    marginRight: 35,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: 0,
   },
 });
 

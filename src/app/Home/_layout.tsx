@@ -10,7 +10,7 @@ const Layout = () => {
       <Drawer
         screenOptions={{
           drawerStyle: {
-            backgroundColor: colors.dark[800], // cor do fundo do drawer
+            backgroundColor: colors.dark[800],
             width: 170,
           },
           headerStyle: {
@@ -23,7 +23,7 @@ const Layout = () => {
           },
           headerTitleAlign: "left",
           drawerActiveBackgroundColor: colors.primary.default,
-          drawerInactiveTintColor: colors.light[200],
+          drawerInactiveTintColor: colors.dark[300],
           drawerActiveTintColor: colors.light[200],
         }}
       >
@@ -32,19 +32,54 @@ const Layout = () => {
           options={{
             title: "Home",
             drawerLabel: "Home",
-            drawerIcon: ({ size }) => (
-              <MaterialIcons
-                name="home"
-                size={size}
-                color={colors.light[200]}
-              />
+            drawerIcon: ({ size, color }) => (
+              <MaterialIcons name="home" size={size} color={color} />
             ),
+          }}
+        />
+
+        <Drawer.Screen
+          name="myDeck/index"
+          options={{
+            title: "My Deck",
+            headerShown: true,
+            headerTitleStyle: {
+              color: colors.light[200],
+              fontWeight: "bold",
+            },
+            headerStyle: {
+              backgroundColor: colors.dark[800],
+            },
+            headerTintColor: colors.light[200],
+            drawerLabel: "My Deck",
+            drawerActiveTintColor: "#fff",
+            drawerActiveBackgroundColor: colors.primary.default,
+            drawerIcon: ({ size, color }) => (
+              <MaterialIcons name="card-travel" size={size} color={color} />
+            ),
+          }}
+        />
+
+        <Drawer.Screen
+          name="HomeCard"
+          options={{
+            title: "Detalhes",
+            drawerItemStyle: { display: "none" },
+          }}
+        />
+
+        <Drawer.Screen
+          name="myDeck/DeckCard"
+          options={{
+            title: "Detalhes",
+            drawerItemStyle: { display: "none" },
           }}
         />
 
         <Drawer.Screen
           name="cardDetails/[id]"
           options={{
+            title: "Detalhes",
             drawerItemStyle: { display: "none" },
           }}
         />
@@ -60,12 +95,8 @@ const Layout = () => {
             drawerLabel: "Sign Out",
             drawerActiveBackgroundColor: colors.primary.default,
             drawerActiveTintColor: "#fff",
-            drawerIcon: ({ size }) => (
-              <MaterialIcons
-                name="logout"
-                size={size}
-                color={colors.light[200]}
-              />
+            drawerIcon: ({ size, color }) => (
+              <MaterialIcons name="logout" size={size} color={color} />
             ),
           }}
         />
