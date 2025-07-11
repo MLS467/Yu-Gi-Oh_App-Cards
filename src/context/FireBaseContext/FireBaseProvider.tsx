@@ -33,10 +33,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (!userCredential.user) {
         throw new Error("User not found after sign-in.");
       }
-
-      console.log("Login successful:", userCredential.user);
-      Alert.alert("Login", "Login realizado com sucesso!");
-      // A navegação será feita automaticamente pelo onAuthStateChanged
     } catch (error: any) {
       throw error;
     } finally {

@@ -1,26 +1,16 @@
-import React, { useEffect, useState } from "react";
+import YugiohLoading from "@/components/YugiohLoading";
+import React from "react";
 import { FlatList, Text, View } from "react-native";
+import { useHomeContext } from "../../Hook/useHomeContext";
 import HomeCard from "./HomeCard";
 import { styles } from "./styles";
 
 const Home = () => {
-  const [data_cards, setDataCards] = useState<any>([]);
+  const { dataCards, loading } = useHomeContext();
 
-  useEffect(() => {
-    fetchYuGiOhCards();
-  }, []);
-
-  async function fetchYuGiOhCards(limit = 100) {
-    try {
-      const response = await fetch(
-        "https://db.ygoprodeck.com/api/v7/cardinfo.php"
-      );
-      const data = await response.json();
-      setDataCards(data.data.slice(0, limit));
-    } catch (error) {
-      console.error("Erro ao buscar cartas:", error);
-      return [];
-    }
+  // Mostrar tela de loading enquanto as cartas estão sendo carregadas
+  if (loading) {
+    return <YugiohLoading />;
   }
 
   return (
@@ -30,7 +20,7 @@ const Home = () => {
       </View>
       <View style={styles.cardContainer}>
         <FlatList
-          data={data_cards}
+          data={dataCards}
           keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           renderItem={({ item }) => (

@@ -1,38 +1,56 @@
 import { colors } from "@/constants/Colors";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Image, StyleSheet, View } from "react-native";
 import { Button, Card, Text } from "react-native-paper";
-import { MaterialIcons } from "@expo/vector-icons";
 
 interface DeckCardProps {
   id: string;
   docId: string;
   name: string;
   image: string;
+  notes?: string;
   onRemove: (docId: string) => void;
 }
 
-const DeckCard = ({ id, docId, name, image, onRemove }: DeckCardProps) => {
+const DeckCard = ({
+  id,
+  docId,
+  name,
+  image,
+  notes = "",
+  onRemove,
+}: DeckCardProps) => {
   const route = useRouter();
 
   return (
     <Card style={styles.card} mode="contained">
       <View style={styles.imageContainer}>
-        <Image source={{ uri: image }} style={styles.img} resizeMode="contain" />
+        <Image
+          source={{ uri: image }}
+          style={styles.img}
+          resizeMode="contain"
+        />
+
         <View style={styles.textOverlay}>
           <Text style={styles.cardText} numberOfLines={2}>
             {name}
           </Text>
+          {notes && notes.trim() !== "" && (
+            <View style={styles.noteBadge}>
+              <MaterialIcons name="note" size={12} color={colors.light[200]} />
+            </View>
+          )}
         </View>
       </View>
 
       <View style={styles.cardActions}>
         <Button
           mode="contained"
-          onPress={() =>
-            route.push({ pathname: "/Home/cardDetails/[id]", params: { id } })
-          }
+          onPress={() => {
+            route.push(`/Home/myDeck/detailsMyDeck/${id}?fromDeck=true`);
+          }}
           style={styles.detailsButton}
           labelStyle={styles.buttonLabel}
           icon={({ size, color }) => (
@@ -97,7 +115,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     textAlign: "center",
-    textShadowColor: 'rgba(0, 0, 0, 0.75)',
+    textShadowColor: "rgba(0, 0, 0, 0.75)",
     textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
@@ -121,6 +139,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: colors.light[200],
     fontWeight: "bold",
+  },
+  noteBadge: {
+    position: "absolute",
+    top: 8,
+    right: 8,
+    backgroundColor: colors.primary.default,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

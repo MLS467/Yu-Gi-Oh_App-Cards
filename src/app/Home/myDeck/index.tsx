@@ -1,27 +1,22 @@
 import { UseCrud } from "@/Hook/useCrud";
+import YugiohLoading from "@/components/YugiohLoading";
 import { colors } from "@/constants/Colors";
 import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
 import { MaterialIcons } from "@expo/vector-icons";
-import React, { useEffect, useState } from "react";
-import {
-  ActivityIndicator,
-  Alert,
-  FlatList,
-  SafeAreaView,
-  Text,
-  View,
-} from "react-native";
+import { useFocusEffect } from "expo-router";
+import React, { useCallback, useRef, useState } from "react";
+import { Alert, FlatList, SafeAreaView, Text, View } from "react-native";
 import { Button } from "react-native-paper";
 import DeckCard from "./DeckCard";
 import { styles } from "./style";
 
-// Definindo o tipo para as cartas favoritas
 interface FavoriteCard {
   id: string;
   userId: string;
   cardId: string;
   cardName: string;
   cardImage: string;
+  notes: string;
   favoritadoEm: any;
 }
 
@@ -29,34 +24,86 @@ const MyDeck = () => {
   const { crud }: any = UseCrud();
   const user = auth.currentUser;
 
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [favoriteCards, setFavoriteCards] = useState<FavoriteCard[]>([]);
+  const isLoadingRef = useRef(false);
 
-  // Função para buscar as cartas favoritas do usuário usando o CrudContext
-  const fetchFavoriteCards = async () => {
-    if (!user?.uid) return;
+  // Usando useRef para controlar o estado de loading sem causar re-renderização
+  const fetchFavoriteCards = useCallback(async () => {
+    if (!user?.uid) {
+      console.log("Usuário não está logado, ignorando busca");
+      return;
+    }
 
+    // Verifica se já está carregando usando a ref
+    if (isLoadingRef.current) {
+      console.log("Já está carregando, ignorando nova chamada");
+      return;
+    }
+
+    // Define o estado de loading
+    isLoadingRef.current = true;
     setLoading(true);
+
     try {
+      console.log("Buscando cartas favoritas do usuário:", user.uid);
       const result = await crud.getUserFavoriteCards(user.uid);
 
       if (result.success) {
+        // Atualiza o estado com as novas cartas
         setFavoriteCards(result.favoriteCards);
+        console.log(
+          "Cartas carregadas com sucesso:",
+          result.favoriteCards.length
+        );
       }
     } catch (error) {
       console.error("Erro ao buscar cartas favoritas:", error);
     } finally {
+      // Reseta o estado de loading
+      isLoadingRef.current = false;
       setLoading(false);
     }
-  };
+  }, [crud, user?.uid]);
 
-  // Buscar favoritos quando o componente montar
-  useEffect(() => {
-    fetchFavoriteCards();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.uid]);
+  // Efeito para carregar dados quando a tela receber foco
+  useFocusEffect(
+    // Não incluímos fetchFavoriteCards como dependência para evitar o loop infinito
+    React.useCallback(() => {
+      console.log(
+        "MyDeck recebeu foco - verificando necessidade de recarregar"
+      );
 
-  // Função para remover uma carta dos favoritos
+      // Função de carregamento específica para este efeito
+      const loadData = async () => {
+        if (!user?.uid || isLoadingRef.current) return;
+
+        // Chama a função de busca diretamente
+        isLoadingRef.current = true;
+        setLoading(true);
+
+        try {
+          console.log("Buscando cartas no focus effect");
+          const result = await crud.getUserFavoriteCards(user.uid);
+          if (result.success) {
+            setFavoriteCards(result.favoriteCards);
+          }
+        } catch (error) {
+          console.error("Erro ao buscar cartas:", error);
+        } finally {
+          isLoadingRef.current = false;
+          setLoading(false);
+        }
+      };
+
+      loadData();
+
+      return () => {
+        console.log("MyDeck perdeu foco");
+      };
+    }, [crud, user?.uid]) // Dependências seguras que não causam loops
+  );
+
   const handleRemoveCard = async (docId: string) => {
     try {
       Alert.alert(
@@ -67,10 +114,14 @@ const MyDeck = () => {
           {
             text: "Remover",
             onPress: async () => {
+              // Atualiza os estados de loading
+              isLoadingRef.current = true;
               setLoading(true);
+
               const result = await crud.removeFavorite(docId);
 
               if (result.success) {
+                // Atualizamos localmente o estado para melhor UX
                 setFavoriteCards((prevCards) =>
                   prevCards.filter((card) => card.id !== docId)
                 );
@@ -78,6 +129,9 @@ const MyDeck = () => {
               } else {
                 Alert.alert("Erro", "Não foi possível remover a carta.");
               }
+
+              // Reseta os estados de loading
+              isLoadingRef.current = false;
               setLoading(false);
             },
             style: "destructive",
@@ -97,34 +151,17 @@ const MyDeck = () => {
       docId={item.id}
       name={item.cardName}
       image={item.cardImage}
+      notes={item.notes || ""}
       onRemove={handleRemoveCard}
     />
   );
 
-  // Mostrar loading
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={colors.primary.default} />
-        <Text style={styles.loadingText}>Carregando seu deck...</Text>
-      </View>
-    );
+    return <YugiohLoading />;
   }
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* <View style={styles.headerContainer}>
-        <Text style={styles.title}>Meu Deck</Text>
-        <Button
-          mode="text"
-          onPress={fetchFavoriteCards}
-          icon={({ size, color }) => (
-            <MaterialIcons name="refresh" size={24} color={colors.light[200]} />
-          )}
-          style={{ marginRight: -10 }}
-        />
-      </View> */}
-
       {favoriteCards.length > 0 ? (
         <FlatList
           data={favoriteCards}
@@ -144,7 +181,29 @@ const MyDeck = () => {
           </Text>
           <Button
             mode="contained"
-            onPress={fetchFavoriteCards}
+            onPress={() => {
+              if (!isLoadingRef.current) {
+                if (user?.uid) {
+                  isLoadingRef.current = true;
+                  setLoading(true);
+
+                  crud
+                    .getUserFavoriteCards(user.uid)
+                    .then((result: any) => {
+                      if (result.success) {
+                        setFavoriteCards(result.favoriteCards);
+                      }
+                    })
+                    .catch((error: any) =>
+                      console.error("Erro ao atualizar:", error)
+                    )
+                    .finally(() => {
+                      isLoadingRef.current = false;
+                      setLoading(false);
+                    });
+                }
+              }
+            }}
             style={styles.refreshButton}
             icon={({ size, color }) => (
               <MaterialIcons name="refresh" size={size} color={color} />

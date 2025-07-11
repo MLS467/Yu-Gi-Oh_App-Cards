@@ -50,11 +50,13 @@ export const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: colors.dark[800],
   },
   loadingText: {
-    fontSize: 16,
+    fontSize: 18,
     color: colors.light[200],
-    marginTop: 12,
+    marginTop: 16,
+    fontWeight: "500",
   },
   refreshButton: {
     marginTop: 24,

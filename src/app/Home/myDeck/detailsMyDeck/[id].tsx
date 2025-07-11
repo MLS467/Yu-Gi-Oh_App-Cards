@@ -1,113 +1,29 @@
 import { UseCrud } from "@/Hook/useCrud";
 import YugiohLoading from "@/components/YugiohLoading";
+import { colors } from "@/constants/Colors";
 import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
-  Alert,
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
+    Alert,
+    Image,
+    Text,
+    TextInput,
+    View,
 } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { styles } from "./style";
 
-export default function CardDetailScreen() {
+export default function DetailMyDeckScreen() {
+  const { crud }: any = UseCrud();
+  const navigate = useRouter();
   const params = useLocalSearchParams();
   const id = params.id as string;
-  const fromDeck = params.fromDeck as string;
   const user = auth.currentUser;
-
-  const { crud }: any = UseCrud();
-
   const [carta, setCarta] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [checkingFavorite, setCheckingFavorite] = useState(false);
-  const [isFavorite, setIsFavorite] = useState(false);
   const [favoriteDocId, setFavoriteDocId] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
-
-  // Verificar se a carta já está nos favoritos - versão simples
-  async function checkIfFavorite() {
-    if (!user?.uid || !carta) return;
-
-    setCheckingFavorite(true);
-
-    try {
-      const result = await crud.isCardFavorite(user.uid, carta.id.toString());
-
-      setIsFavorite(result.isFavorite);
-      if (result.isFavorite) {
-        setFavoriteDocId(result.docId);
-
-        // Always try to get notes if the card is favorite
-        if (result.docId) {
-          try {
-            const favoriteCards = await crud.getUserFavoriteCards(user.uid);
-
-            if (favoriteCards.success) {
-              const card = favoriteCards.favoriteCards.find(
-                (c: any) => c.id === result.docId
-              );
-
-              if (card) {
-                setNotes(card.notes || "");
-              }
-            }
-          } catch (notesError) {
-            console.error("Error fetching notes:", notesError);
-          }
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao verificar favorito:", error);
-    } finally {
-      setCheckingFavorite(false);
-    }
-  }
-
-  // Gerenciar favorito (adicionar ou remover) - versão simplificada
-  const handleFavoritePress = async () => {
-    if (!user?.uid || !carta) {
-      Alert.alert("Erro", "Você precisa estar logado para favoritar cartas.");
-      return;
-    }
-
-    try {
-      setCheckingFavorite(true);
-
-      if (!isFavorite) {
-        // Adicionar aos favoritos
-        const result = await crud.favoriteCard(user.uid, carta);
-
-        if (result.success) {
-          setFavoriteDocId(result.docId);
-          setIsFavorite(true);
-          Alert.alert("Sucesso", "Carta adicionada aos favoritos!");
-        } else {
-          Alert.alert("Erro", "Falha ao adicionar aos favoritos.");
-        }
-      } else if (favoriteDocId) {
-        // Remover dos favoritos
-        const result = await crud.removeFavorite(favoriteDocId);
-
-        if (result.success) {
-          setFavoriteDocId(null);
-          setIsFavorite(false);
-          Alert.alert("Sucesso", "Carta removida dos favoritos!");
-        } else {
-          Alert.alert("Erro", "Falha ao remover dos favoritos.");
-        }
-      }
-    } catch (error) {
-      console.error("Erro ao processar favorito:", error);
-      Alert.alert("Erro", "Não foi possível processar a operação de favorito.");
-    } finally {
-      setCheckingFavorite(false);
-    }
-  };
 
   useEffect(() => {
     fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${id}`)
@@ -124,11 +40,54 @@ export default function CardDetailScreen() {
   }, [id]);
 
   useEffect(() => {
-    if (carta && user?.uid) {
-      checkIfFavorite();
+    async function carregarAnotacoes() {
+      if (!user?.uid || !id) return;
+
+      try {
+        const result = await crud.getUserFavoriteCards(user.uid);
+
+        if (result.success && result.favoriteCards.length > 0) {
+          const cartaEncontrada = result.favoriteCards.find(
+            (card: any) => card.cardId.toString() === id.toString()
+          );
+
+          if (cartaEncontrada) {
+            setFavoriteDocId(cartaEncontrada.id);
+            setNotes(cartaEncontrada.notes || "");
+          } else {
+            console.log("Carta específica não encontrada no deck do usuário");
+            setFavoriteDocId(null);
+            setNotes("");
+          }
+        } else {
+          console.log("Nenhuma carta encontrada no deck do usuário");
+          setFavoriteDocId(null);
+          setNotes("");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar anotações:", error);
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [carta, user?.uid, fromDeck]);
+
+    carregarAnotacoes();
+  }, [id, user?.uid, crud]);
+
+  const handleUpdate = async (docId: string, notes: string) => {
+    try {
+      setLoading(true);
+      const result = await crud.updateCardNotes(docId, notes);
+      setLoading(false);
+
+      if (result.success) {
+        Alert.alert("Sucesso", "Anotações salvas com sucesso!");
+      } else {
+        Alert.alert("Erro", "Falha ao salvar anotações.");
+      }
+    } catch (error) {
+      setLoading(false);
+      Alert.alert("Erro", "Não foi possível salvar as anotações.");
+    }
+  };
 
   if (loading) {
     return <YugiohLoading />;
@@ -239,52 +198,45 @@ export default function CardDetailScreen() {
           </View>
         )}
 
-        <View style={styles.buttonsContainer}>
-          <TouchableOpacity
-            style={[
-              styles.favoriteButton,
-              isFavorite && styles.favoriteButtonActive,
-            ]}
-            onPress={handleFavoritePress}
-            disabled={checkingFavorite}
-          >
-            {checkingFavorite ? (
-              <ActivityIndicator size="small" color="#fff" />
-            ) : (
-              <>
-                <Text style={styles.favoriteIcon}>
-                  {isFavorite ? "⭐" : "☆"}
-                </Text>
-                <Text style={styles.favoriteText}>
-                  {isFavorite ? "Remover dos My Deck" : "Adicionar ao My Deck"}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
+        <View style={styles.notesSection}>
+          <Text style={styles.sectionTitle}>Anotações</Text>
+          <TextInput
+            style={styles.notesInput}
+            placeholder="Adicione suas anotações sobre esta carta..."
+            placeholderTextColor={colors.dark[500]}
+            multiline
+            numberOfLines={4}
+            textAlignVertical="top"
+            value={notes}
+            onChangeText={setNotes}
+          />
 
-          <TouchableOpacity
-            style={styles.linkButton}
-            onPress={() => {
-              const cardName = carta.name.replace(/ /g, "%20");
-              const url = `https://www.db.yugioh-card.com/yugiohdb/?request=search&keyword=${cardName}`;
-              // Aqui você pode usar Linking.openURL(url) ou similar para abrir no navegador
-              Alert.alert("Site Oficial", "Deseja abrir o site oficial?", [
-                {
-                  text: "Cancelar",
-                  style: "cancel",
-                },
-                {
-                  text: "Abrir",
-                  onPress: () => {
-                    // Você pode implementar a lógica para abrir um navegador aqui
-                    console.log("Abrir site: " + url);
-                  },
-                },
-              ]);
+          <View
+            style={styles.saveButton}
+            onTouchEnd={() => {
+              if (!favoriteDocId) {
+                Alert.alert(
+                  "Erro",
+                  "Você precisa estar logado para salvar anotações."
+                );
+                return;
+              }
+              handleUpdate(favoriteDocId, notes);
             }}
           >
-            <Text style={styles.linkText}>Saber mais no site oficial</Text>
-          </TouchableOpacity>
+            <Text style={styles.saveButtonText}>Salvar Anotações</Text>
+          </View>
+        </View>
+
+        <View style={styles.backButtonContainer}>
+          <View
+            style={styles.backButton}
+            onTouchEnd={() => {
+              navigate.push("/Home/myDeck");
+            }}
+          >
+            <Text style={styles.backButtonText}>Voltar</Text>
+          </View>
         </View>
       </ScrollView>
     </View>

@@ -7,6 +7,7 @@ import {
   getDocs,
   query,
   Timestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import React from "react";
@@ -14,7 +15,6 @@ import { AuthProviderProps } from "../FireBaseContext/context";
 import { CrudContext } from "./CrudContext";
 
 const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  // Adicionar carta aos favoritos - versão simplificada
   async function favoriteCard(userId: string, carta: any) {
     try {
       const docRef = await addDoc(collection(db, "favoriteCards"), {
@@ -22,6 +22,7 @@ const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
         cardId: carta.id,
         cardName: carta.name,
         cardImage: carta.card_images[0].image_url,
+        notes: "",
         favoritadoEm: Timestamp.now(),
       });
 
@@ -33,7 +34,6 @@ const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
-  // Verificar se carta já está nos favoritos - versão simplificada
   async function isCardFavorite(userId: string, cardId: string) {
     try {
       const q = query(
@@ -56,7 +56,6 @@ const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
-  // Remover carta dos favoritos - versão simplificada
   async function removeFavorite(docId: string) {
     try {
       await deleteDoc(doc(db, "favoriteCards", docId));
@@ -67,7 +66,6 @@ const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
-  // Obter todas as cartas favoritas de um usuário
   async function getUserFavoriteCards(userId: string) {
     try {
       const q = query(
@@ -92,11 +90,24 @@ const CrudProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }
 
+  async function updateCardNotes(docId: string, notes: string) {
+    try {
+      await updateDoc(doc(db, "favoriteCards", docId), {
+        notes: notes,
+      });
+      return { success: true };
+    } catch (error) {
+      console.error("Erro ao atualizar notas:", error);
+      return { success: false };
+    }
+  }
+
   const crud = {
     favoriteCard,
     isCardFavorite,
     removeFavorite,
     getUserFavoriteCards,
+    updateCardNotes,
   };
 
   return (

@@ -8,6 +8,18 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingTop: 16,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: colors.dark[800],
+  },
+  loadingText: {
+    fontSize: 18,
+    color: colors.light[200],
+    marginTop: 16,
+    fontWeight: "500",
+  },
   header: {
     width: "100%",
     flexDirection: "row",

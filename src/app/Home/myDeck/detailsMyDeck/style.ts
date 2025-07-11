@@ -1,5 +1,5 @@
 import { StyleSheet } from "react-native";
-import { colors } from "../../../constants/Colors";
+import { colors } from "../../../../constants/Colors";
 
 export const styles = StyleSheet.create({
   container: {
@@ -239,7 +239,51 @@ export const styles = StyleSheet.create({
     marginVertical: 10,
   },
   saveButton: {
-    marginTop: 10,
     backgroundColor: colors.primary.default,
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    marginTop: 16,
+    marginBottom: 24,
+    shadowColor: colors.primary.default,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 2,
+    borderColor: colors.primary.alt1,
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  saveButtonText: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: colors.light[100],
+    textShadowColor: "rgba(0,0,0,0.5)",
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 2,
+  },
+  backButtonContainer: {
+    marginTop: 10,
+    marginBottom: 30,
+    paddingHorizontal: 10,
+  },
+  backButton: {
+    backgroundColor: colors.dark[700],
+    padding: 15,
+    borderRadius: 12,
+    alignItems: "center",
+    shadowColor: colors.dark[900],
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 6,
+    elevation: 5,
+    borderWidth: 1,
+    borderColor: colors.primary.alt2,
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: colors.light[200],
   },
 });
