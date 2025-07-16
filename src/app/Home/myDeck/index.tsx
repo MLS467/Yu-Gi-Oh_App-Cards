@@ -166,11 +166,18 @@ const MyDeck = () => {
         <FlatList
           data={favoriteCards}
           renderItem={renderItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
           numColumns={2}
           contentContainerStyle={styles.cardsContainer}
           columnWrapperStyle={styles.columnWrapper}
           showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          windowSize={7}
+          removeClippedSubviews={true}
+          legacyImplementation={true}
+          scrollEventThrottle={16}
         />
       ) : (
         <View style={styles.emptyContainer}>

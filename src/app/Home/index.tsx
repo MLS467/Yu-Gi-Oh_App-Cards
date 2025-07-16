@@ -5,14 +5,13 @@ import React from "react";
 import { FlatList, Text, View } from "react-native";
 import { TextInput } from "react-native-paper";
 import { useHomeContext } from "../../Hook/useHomeContext";
-import HomeCard from "./HomeCard";
+import HomeCard from "../../components/HomeCard";
 import { styles } from "./styles";
 
 const Home = () => {
   const { dataCards, loading } = useHomeContext();
   const [search, setSearch] = React.useState("");
 
-  // Mostrar tela de loading enquanto as cartas estão sendo carregadas
   if (loading) {
     return <YugiohLoading />;
   }
@@ -56,8 +55,13 @@ const Home = () => {
           data={dataCards}
           keyExtractor={(item) => item.id.toString()}
           horizontal={false}
-          pagingEnabled={true}
           showsVerticalScrollIndicator={false}
+          initialNumToRender={10}
+          maxToRenderPerBatch={10}
+          updateCellsBatchingPeriod={50}
+          windowSize={7}
+          removeClippedSubviews={true}
+          legacyImplementation={true}
           renderItem={({ item }) => (
             <View
               style={{

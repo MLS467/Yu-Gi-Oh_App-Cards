@@ -1,5 +1,7 @@
 import React, { createContext, ReactNode, useEffect, useState } from "react";
 
+const qtdCards = 50;
+
 interface Card {
   id: number;
   name: string;
@@ -24,7 +26,7 @@ export const HomeProvider: React.FC<{ children: ReactNode }> = ({
     fetchYuGiOhCards();
   }, []);
 
-  async function fetchYuGiOhCards(limit = 2) {
+  async function fetchYuGiOhCards(limit = qtdCards) {
     setLoading(true);
     try {
       console.log("Buscando cartas do Yu-Gi-Oh...");

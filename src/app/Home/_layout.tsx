@@ -1,3 +1,4 @@
+import CustomDrawerContent from "@/components/CustomDrawerContent";
 import { colors } from "@/constants/Colors";
 import { HomeProvider } from "@/context/HomeContext/HomeContext";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
@@ -11,10 +12,11 @@ const Layout = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <HomeProvider>
         <Drawer
+          drawerContent={(props) => <CustomDrawerContent {...props} />}
           screenOptions={({ navigation }) => ({
             drawerStyle: {
               backgroundColor: colors.dark[800],
-              width: 170,
+              width: "70%",
             },
             headerStyle: {
               backgroundColor: colors.dark[700],
@@ -120,6 +122,7 @@ const Layout = () => {
           <Drawer.Screen
             name="SignOut"
             options={{
+              drawerItemStyle: { display: "none" },
               title: "SignOut",
               headerTitleContainerStyle: {
                 paddingLeft: 10,
