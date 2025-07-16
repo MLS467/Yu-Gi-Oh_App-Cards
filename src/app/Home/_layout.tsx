@@ -1,8 +1,9 @@
 import { colors } from "@/constants/Colors";
 import { HomeProvider } from "@/context/HomeContext/HomeContext";
-import { MaterialIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import Drawer from "expo-router/drawer";
 import React from "react";
+import { TouchableOpacity } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 const Layout = () => {
@@ -10,24 +11,46 @@ const Layout = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <HomeProvider>
         <Drawer
-          screenOptions={{
+          screenOptions={({ navigation }) => ({
             drawerStyle: {
               backgroundColor: colors.dark[800],
               width: 170,
             },
             headerStyle: {
-              backgroundColor: colors.dark[800],
+              backgroundColor: colors.dark[700],
+              elevation: 0,
+              shadowColor: "transparent",
+              height: 50,
+              justifyContent: "center",
+              alignItems: "center",
             },
             headerTintColor: colors.light[200],
-            headerTitleStyle: {
-              fontWeight: "bold",
-              color: colors.light[200],
-            },
+
+            headerTitle: "",
             headerTitleAlign: "left",
             drawerActiveBackgroundColor: colors.primary.default,
             drawerInactiveTintColor: colors.dark[300],
             drawerActiveTintColor: colors.light[200],
-          }}
+
+            // Ícone personalizado no lugar do hambúrguer
+            headerLeft: () => (
+              <TouchableOpacity
+                style={{
+                  marginTop: 10,
+                  marginLeft: 15,
+                  height: 50,
+                  alignItems: "center",
+                }}
+                onPress={() => navigation.toggleDrawer()}
+              >
+                <MaterialCommunityIcons
+                  name="page-layout-sidebar-left"
+                  size={20}
+                  color={colors.light[200]}
+                />
+              </TouchableOpacity>
+            ),
+          })}
         >
           <Drawer.Screen
             name="index"

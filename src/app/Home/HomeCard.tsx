@@ -51,25 +51,23 @@ const HomeCard = ({ id, name, image }: HomeCardProps) => {
 const styles = StyleSheet.create({
   card: {
     backgroundColor: colors.dark[700],
-    width: 170,
+    width: 300,
     borderRadius: 12,
-    margin: 5,
-    marginBottom: 16,
     elevation: 4,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: colors.dark[600],
   },
   imageContainer: {
+    backgroundColor: colors.dark[800],
+    paddingTop: 15,
     position: "relative",
     width: "100%",
-    height: 220,
+    height: 500,
   },
   img: {
     width: "100%",
-    height: 220,
-    borderTopLeftRadius: 12,
-    borderTopRightRadius: 12,
+    height: "100%",
   },
   textOverlay: {
     position: "absolute",
@@ -81,7 +79,7 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 12,
     borderTopRightRadius: 12,
     borderBottomWidth: 1,
-    borderBottomColor: colors.primary.default,
+    // borderBottomColor: colors.primary.default,
   },
   cardText: {
     color: colors.light[200],
@@ -94,8 +92,7 @@ const styles = StyleSheet.create({
   },
   cardActions: {
     backgroundColor: colors.dark[800],
-    padding: 10,
-    paddingHorizontal: 8,
+    padding: 5,
     borderBottomLeftRadius: 12,
     borderBottomRightRadius: 12,
   },

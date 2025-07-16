@@ -1,15 +1,15 @@
 export const colors = {
   dark: {
-    100: "#dcdcdc", // texto claro
-    200: "#b8b8b8",
-    300: "#949494",
-    400: "#707070",
-    500: "#4c4c4c",
-    600: "#383838",
-    700: "#2a2a2a",
-    800: "#1c1c1c", // fundo principal
-    900: "#121212",
-    950: "#080808",
+    100: "#f8f9fa", // texto branco claro
+    200: "#e9ecef",
+    300: "#dee2e6",
+    400: "#ced4da",
+    500: "#adb5bd",
+    600: "#6c757d",
+    700: "#495057",
+    800: "#212529", // fundo principal (grafite/azul escuro)
+    900: "#1a1d20",
+    950: "#121417", // ainda mais escuro
   },
   light: {
     100: "#ffffff",
@@ -25,7 +25,7 @@ export const colors = {
   },
   primary: {
     default: "#b22222", // Vermelho escuro (Duel Monsters vibe)
-    alt1: "#ffcc00", // Dourado (detalhes)
+    alt1: "#ffcc00", // Dourado (detalhes, botões, destaques)
     alt2: "#6a0dad", // Roxo místico
   },
 };

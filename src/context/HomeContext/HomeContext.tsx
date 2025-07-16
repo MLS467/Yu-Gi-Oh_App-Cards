@@ -24,7 +24,7 @@ export const HomeProvider: React.FC<{ children: ReactNode }> = ({
     fetchYuGiOhCards();
   }, []);
 
-  async function fetchYuGiOhCards(limit = 500) {
+  async function fetchYuGiOhCards(limit = 2) {
     setLoading(true);
     try {
       console.log("Buscando cartas do Yu-Gi-Oh...");
