@@ -6,7 +6,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import React, { useState } from "react";
 import { Controller } from "react-hook-form";
-import { Image, Text, TouchableOpacity, View } from "react-native";
+import { Alert, Image, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { styles } from "./styles";
 
@@ -17,11 +17,32 @@ const SignUp = () => {
     watch,
     formState: { errors },
     cadastrar,
+    tiraFoto,
+    buscaNaGaleria,
     reset,
   } = useSignUp();
 
   const [senhaVisible, setSenhaVisible] = useState(false);
   const [confirmarSenhaVisible, setConfirmarSenhaVisible] = useState(false);
+  const [avatarUri, setAvatarUri] = useState<string | undefined>("");
+
+  // Função utilitária para galeria/câmera
+  async function tiraFotoOuGaleria(tipo: "galeria" | "camera") {
+    try {
+      let result;
+      if (tipo === "galeria") {
+        result = await buscaNaGaleria();
+      } else {
+        result = await tiraFoto();
+      }
+      if (result && result.assets && result.assets[0] && result.assets[0].uri) {
+        return result.assets[0].uri;
+      }
+      return undefined;
+    } catch {
+      return undefined;
+    }
+  }
 
   async function onSubmit(formData: any) {
     try {
@@ -41,10 +62,35 @@ const SignUp = () => {
   return (
     <View style={styles.container}>
       <View style={homeStyle.header}>
-        <View>
-          <Image style={styles.logo} source={require("@/assets/folha.png")} />
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert("Alterar foto", "Escolha uma opção:", [
+              {
+                text: "Galeria",
+                onPress: async () => {
+                  const result = await tiraFotoOuGaleria("galeria");
+                  if (result) setAvatarUri(result);
+                },
+              },
+              {
+                text: "Tirar foto",
+                onPress: async () => {
+                  const result = await tiraFotoOuGaleria("camera");
+                  if (result) setAvatarUri(result);
+                },
+              },
+              { text: "Cancelar", style: "cancel" },
+            ]);
+          }}
+          activeOpacity={0.7}
+        >
+          {avatarUri ? (
+            <Image style={styles.logo} source={{ uri: avatarUri }} />
+          ) : (
+            <Image style={styles.logo} source={require("@/assets/folha.png")} />
+          )}
           <Text style={styles.title}>Cadastro de Usuário</Text>
-        </View>
+        </TouchableOpacity>
         <View style={homeStyle.arrowBack}>
           <TouchableOpacity onPress={() => router.back()}>
             <MaterialIcons

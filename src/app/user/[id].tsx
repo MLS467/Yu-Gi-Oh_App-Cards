@@ -1,4 +1,5 @@
 import { db } from "@/context/FireBaseContext/firebase.config/Auth";
+import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { deleteUser, getAuth } from "firebase/auth";
 import {
@@ -27,6 +28,8 @@ const UserScreen = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
+  const [urlDevice, setUrlDevice] = useState<string | undefined>("");
+
   const [form, setForm] = useState({ nome: "", email: "", fotoUrl: "" });
 
   useFocusEffect(
@@ -108,6 +111,34 @@ const UserScreen = () => {
     }
   };
 
+  async function buscaNaGaleria() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const path = result.assets[0].uri;
+      setUrlDevice(path); //armazena a uri para a imagem no device
+    }
+  }
+
+  async function tiraFoto() {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const path = result.assets[0].uri;
+      setUrlDevice(path); //armazena a uri para a imagem no device
+    }
+  }
+
   if (loading) {
     return (
       <View style={styles.container}>
@@ -120,16 +151,27 @@ const UserScreen = () => {
     <View style={styles.container}>
       <Text style={styles.title}>Perfil do Usuário</Text>
       <View style={styles.avatarContainer}>
-        <View style={styles.avatar}>
-          {form.fotoUrl ? (
-            <Image
-              source={{ uri: form?.fotoUrl || "" }}
-              style={styles.avatarImg}
-            />
-          ) : (
-            <Text style={styles.avatarText}>{form.nome.charAt(0)}</Text>
-          )}
-        </View>
+        <TouchableOpacity
+          onPress={() => {
+            if (!editing) return;
+            Alert.alert("Alterar foto", "Escolha uma opção:", [
+              { text: "Galeria", onPress: buscaNaGaleria },
+              { text: "Tirar foto", onPress: tiraFoto },
+              { text: "Cancelar", style: "cancel" },
+            ]);
+          }}
+          activeOpacity={editing ? 0.7 : 1}
+        >
+          <View style={styles.avatar}>
+            {urlDevice ? (
+              <Image source={{ uri: urlDevice }} style={styles.avatarImg} />
+            ) : form.fotoUrl ? (
+              <Image source={{ uri: form.fotoUrl }} style={styles.avatarImg} />
+            ) : (
+              <Text style={styles.avatarText}>{form.nome.charAt(0)}</Text>
+            )}
+          </View>
+        </TouchableOpacity>
       </View>
       <TextInput
         style={styles.input}

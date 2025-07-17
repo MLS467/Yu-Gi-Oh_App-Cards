@@ -1,8 +1,8 @@
-import { SignUpContext } from "./SignUpContext";
-
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
+import { SignUpContext } from "./SignUpContext";
 
 import { useAuth } from "@/Hook/useAuth";
 import { UsuarioType } from "@/model/User";
@@ -56,6 +56,35 @@ const SignUpProvider = ({ children }: { children: ReactNode }) => {
 
   const { signUp } = useAuth();
   const [requisitando, setRequisitando] = useState(false);
+  const [urlDevice, setUrlDevice] = useState<string | undefined>("");
+
+  async function buscaNaGaleria() {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const path = result.assets[0].uri;
+      setUrlDevice(path); //armazena a uri para a imagem no device
+    }
+  }
+
+  async function tiraFoto() {
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ["images", "videos"],
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const path = result.assets[0].uri;
+      setUrlDevice(path); //armazena a uri para a imagem no device
+    }
+  }
 
   const cadastrar = async (data: UsuarioType) => {
     setRequisitando(true); // começa a requisição
@@ -98,6 +127,9 @@ const SignUpProvider = ({ children }: { children: ReactNode }) => {
         requisitando,
         control,
         handleSubmit,
+        tiraFoto,
+        buscaNaGaleria,
+        urlDevice,
         formState: { errors },
         reset,
       }}
