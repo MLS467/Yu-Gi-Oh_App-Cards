@@ -55,9 +55,7 @@ const SignUpProvider = ({ children }: { children: ReactNode }) => {
   });
 
   const { signUp } = useAuth();
-  const [exibirSenha, setExibirSenha] = useState(true);
   const [requisitando, setRequisitando] = useState(false);
-  const [dialogVisivel, setDialogVisivel] = useState(false);
 
   const cadastrar = async (data: UsuarioType) => {
     setRequisitando(true); // começa a requisição
@@ -72,6 +70,8 @@ const SignUpProvider = ({ children }: { children: ReactNode }) => {
       // Agora salva os dados adicionais
       if (uid) {
         await setDoc(doc(db, "users", uid), {
+          nome: data.nome,
+          email: data.email,
           fotoUrl: data.fotoUrl,
           criadoEm: new Date(),
         });

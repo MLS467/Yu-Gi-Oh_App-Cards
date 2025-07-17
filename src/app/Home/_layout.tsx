@@ -88,6 +88,13 @@ const Layout = () => {
           />
 
           <Drawer.Screen
+            name="user/[id]"
+            options={{
+              drawerItemStyle: { display: "none" },
+            }}
+          />
+
+          <Drawer.Screen
             name="HomeCard"
             options={{
               title: "Detalhes",

@@ -6,20 +6,34 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 import type { DrawerContentComponentProps } from "@react-navigation/drawer";
+import { useRouter } from "expo-router";
+import { getAuth } from "firebase/auth";
 
 export default function CustomDrawerContent(
   props: DrawerContentComponentProps
 ) {
+  const navigation = useRouter();
+
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  const navUser = () => {
+    navigation.navigate(`/user/${user?.uid || "defaultUserId"}`);
+  };
+
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
       {/* Topo */}
       <View style={styles.header}>
-        <View style={styles.avatar}>
-          <Text style={styles.avatarText}>YG</Text>
-        </View>
+        <TouchableOpacity onPress={navUser}>
+          <View style={styles.avatar}>
+            {/* manuelle--- */}
+            <Text style={styles.avatarText}>YG</Text>
+          </View>
+        </TouchableOpacity>
         <Text style={styles.logoText}>
           Yu-Gi-<Text style={{ color: colors.primary.alt1 }}>Oh!</Text>
         </Text>
