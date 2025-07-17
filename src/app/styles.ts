@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
     color: colors.light[200],
     fontSize: 30,
     textAlign: "center",
+    fontFamily: "YugiOh",
     margin: 10,
   },
   form: {

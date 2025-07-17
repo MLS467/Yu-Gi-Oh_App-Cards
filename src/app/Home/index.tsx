@@ -27,9 +27,14 @@ const Home = () => {
             marginBottom: 8,
           }}
         >
-          <Text style={[styles.title, { fontSize: 24 }]}>Lista de Cartas</Text>
+          <Text style={styles.title}>Lista de Cartas</Text>
           <Text
-            style={{ marginLeft: 10, fontSize: 24, color: colors.primary.alt1 }}
+            style={{
+              marginLeft: 10,
+              fontSize: 24,
+              color: colors.primary.alt1,
+              fontFamily: "YugiOh",
+            }}
           >
             Yu-Gi-Oh
           </Text>

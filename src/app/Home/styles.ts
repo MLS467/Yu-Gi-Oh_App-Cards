@@ -36,9 +36,10 @@ const styles = StyleSheet.create({
   },
   title: {
     color: colors.light[200],
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "center",
+    fontFamily: "YugiOh !important",
   },
   cardList: {
     alignItems: "center",

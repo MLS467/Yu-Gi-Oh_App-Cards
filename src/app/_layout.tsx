@@ -4,11 +4,14 @@ import CrudProvider from "@/context/Crud/CrudProvider";
 import { AuthProvider } from "@/context/FireBaseContext/FireBaseProvider";
 import { HomeProvider } from "@/context/HomeContext/HomeContext";
 import LoginProvider from "@/context/ScreenContext/Login/LoginProvider";
+import SignUpProvider from "@/context/SignUpContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { useAuth } from "@/Hook/useAuth";
+import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
+import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Componente que usa o contexto DENTRO do AuthProvider
@@ -61,6 +64,14 @@ const RootLayout = () => {
     SplashScreen.hideAsync();
   }, []);
 
+  const [fontsLoaded] = useFonts({
+    YugiOh: require("../../assets/font/matrix.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <View />; // ou uma tela de loading
+  }
+
   return (
     <ThemeProvider>
       <SafeAreaView style={{ flex: 1 }}>
@@ -68,7 +79,9 @@ const RootLayout = () => {
           <LoginProvider>
             <CrudProvider>
               <HomeProvider>
-                <AppNavigator />
+                <SignUpProvider>
+                  <AppNavigator />
+                </SignUpProvider>
               </HomeProvider>
             </CrudProvider>
           </LoginProvider>

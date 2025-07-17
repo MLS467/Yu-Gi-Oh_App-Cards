@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: colors.light[100],
+    fontFamily: "YugiOh",
   },
   navSection: {
     paddingHorizontal: 10,

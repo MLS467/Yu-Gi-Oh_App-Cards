@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = async (email: string, password: string): Promise<any> => {
     try {
       setLoading(true);
       const userCredential = await createUserWithEmailAndPassword(
@@ -68,12 +68,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         throw new Error("User not found after sign-up.");
       }
 
-      console.log("Sign-up successful:", userCredential.user);
-      Alert.alert("Cadastro", "Cadastro realizado com sucesso!");
-      // A navegação será feita automaticamente pelo onAuthStateChanged
+      return userCredential.user.uid;
     } catch (error: any) {
       console.error("Error during sign-up:", error);
-      Alert.alert("Erro", "Erro ao fazer cadastro. Tente novamente.");
       throw error;
     } finally {
       setLoading(false);

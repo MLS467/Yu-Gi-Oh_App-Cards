@@ -8,22 +8,12 @@ const LoginProvider = ({ children }: any) => {
   const router = useRouter();
   const { signIn } = useAuth();
 
-  const user = {
-    email: "teste@teste.com",
-    password: "teste123",
-  };
-
-  // const user = {
-  //   email: "test22e@teste.com",
-  //   password: "tes22te123",
-  // };
-
-  const [email, setEmail] = useState(user.email);
-  const [password, setPassword] = useState(user.password);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async () => {
     try {
-      const userCredential = await signIn(email, password);
+      await signIn(email, password);
 
       router.replace("/Home");
     } catch (error) {
