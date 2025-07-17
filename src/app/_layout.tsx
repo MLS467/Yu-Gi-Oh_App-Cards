@@ -18,6 +18,14 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const AppNavigator = () => {
   const { user, loading } = useAuth();
 
+  const [fontsLoaded] = useFonts({
+    YugiOh: require("../../assets/font/matrix.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <View />; // ou uma tela de loading
+  }
+
   if (loading) {
     return <YugiohLoading />;
   }
@@ -63,14 +71,6 @@ const RootLayout = () => {
     SplashScreen.preventAutoHideAsync();
     SplashScreen.hideAsync();
   }, []);
-
-  const [fontsLoaded] = useFonts({
-    YugiOh: require("../../assets/font/matrix.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return <View />; // ou uma tela de loading
-  }
 
   return (
     <ThemeProvider>

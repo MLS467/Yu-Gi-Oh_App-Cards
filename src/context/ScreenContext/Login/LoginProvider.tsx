@@ -7,11 +7,14 @@ import LoginContext from "./LoginContext";
 const LoginProvider = ({ children }: any) => {
   const router = useRouter();
   const { signIn } = useAuth();
+  const [passwordVisible, setPasswordVisible] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  type LoginProps = {
+    email: string;
+    password: string;
+  };
 
-  const handleSubmit = async () => {
+  const handleLogin = async ({ email, password }: LoginProps) => {
     try {
       await signIn(email, password);
 
@@ -25,12 +28,10 @@ const LoginProvider = ({ children }: any) => {
   return (
     <LoginContext.Provider
       value={{
-        email,
-        password,
-        setEmail,
-        setPassword,
-        handleSubmit,
+        handleLogin,
         router,
+        passwordVisible,
+        setPasswordVisible,
       }}
     >
       {children}

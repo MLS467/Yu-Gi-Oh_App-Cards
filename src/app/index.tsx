@@ -1,7 +1,7 @@
 import { styles } from "@/app/styles";
 import { colors } from "@/constants/Colors";
 import { useLogin } from "@/Hook/useLogin";
-import React, { useState } from "react";
+import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
@@ -13,12 +13,14 @@ type FormData = {
 
 const Login = () => {
   const context = useLogin();
-  const { handleLogin, router }: any = context;
+  const { handleLogin, router, passwordVisible, setPasswordVisible }: any =
+    context;
 
   const {
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     defaultValues: {
       email: "",
@@ -26,10 +28,18 @@ const Login = () => {
     },
   });
 
-  const [passwordVisible, setPasswordVisible] = useState(false);
+  const onSubmit = async (data: FormData) => {
+    try {
+      const user = {
+        email: data.email,
+        password: data.password,
+      };
 
-  const onSubmit = (data: FormData) => {
-    handleLogin(data.email, data.password);
+      handleLogin(user);
+      reset();
+    } catch (error) {
+      console.error("Erro ao fazer login:", error);
+    }
   };
 
   return (
@@ -53,7 +63,7 @@ const Login = () => {
           }}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label="Email"
+              label="email"
               value={value}
               onChangeText={onChange}
               autoCapitalize="none"
@@ -86,7 +96,7 @@ const Login = () => {
               right={
                 <TextInput.Icon
                   icon={passwordVisible ? "eye-off" : "eye"}
-                  onPress={() => setPasswordVisible((prev) => !prev)}
+                  onPress={() => setPasswordVisible((prev: any) => !prev)}
                 />
               }
             />
