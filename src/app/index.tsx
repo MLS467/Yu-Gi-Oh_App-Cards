@@ -1,10 +1,11 @@
 import { styles } from "@/app/styles";
 import { colors } from "@/constants/Colors";
 import { useLogin } from "@/Hook/useLogin";
+import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Button, TextInput } from "react-native-paper";
+import { Button, Snackbar, TextInput } from "react-native-paper";
 
 type FormData = {
   email: string;
@@ -13,8 +14,16 @@ type FormData = {
 
 const Login = () => {
   const context = useLogin();
-  const { handleLogin, router, passwordVisible, setPasswordVisible }: any =
-    context;
+  const {
+    handleLogin,
+    router,
+    passwordVisible,
+    setPasswordVisible,
+    visible,
+    setVisible,
+    message,
+    schema,
+  }: any = context;
 
   const {
     control,
@@ -22,6 +31,7 @@ const Login = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>({
+    resolver: yupResolver(schema),
     defaultValues: {
       email: "",
       password: "",
@@ -35,7 +45,7 @@ const Login = () => {
         password: data.password,
       };
 
-      handleLogin(user);
+      await handleLogin(user);
       reset();
     } catch (error) {
       console.error("Erro ao fazer login:", error);
@@ -127,6 +137,19 @@ const Login = () => {
           <Text style={{ color: colors.light[200] }}>Cadastre-se</Text>
         </Text>
       </TouchableOpacity>
+
+      <Snackbar
+        visible={visible}
+        onDismiss={() => setVisible(false)}
+        duration={3000}
+        action={{
+          label: "Fechar",
+          onPress: () => setVisible(false),
+        }}
+        style={{ backgroundColor: "#2561D9" }} // você pode mudar a cor
+      >
+        {message}
+      </Snackbar>
     </View>
   );
 };
