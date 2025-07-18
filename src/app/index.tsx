@@ -22,6 +22,7 @@ const Login = () => {
     visible,
     setVisible,
     message,
+    urlDevice,
     schema,
   }: any = context;
 
@@ -55,7 +56,12 @@ const Login = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Image style={styles.logo} source={require("@/assets/folha.png")} />
+        <Image
+          style={styles.logo}
+          source={
+            urlDevice ? { uri: urlDevice } : require("@/assets/folha.png")
+          }
+        />
       </View>
 
       <View style={styles.form}>

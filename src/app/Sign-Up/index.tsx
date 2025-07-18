@@ -17,6 +17,8 @@ const SignUp = () => {
     watch,
     formState: { errors },
     cadastrar,
+    urlDevice,
+    setUrlDevice,
     tiraFoto,
     buscaNaGaleria,
     reset,
@@ -24,32 +26,13 @@ const SignUp = () => {
 
   const [senhaVisible, setSenhaVisible] = useState(false);
   const [confirmarSenhaVisible, setConfirmarSenhaVisible] = useState(false);
-  const [avatarUri, setAvatarUri] = useState<string | undefined>("");
-
-  // Função utilitária para galeria/câmera
-  async function tiraFotoOuGaleria(tipo: "galeria" | "camera") {
-    try {
-      let result;
-      if (tipo === "galeria") {
-        result = await buscaNaGaleria();
-      } else {
-        result = await tiraFoto();
-      }
-      if (result && result.assets && result.assets[0] && result.assets[0].uri) {
-        return result.assets[0].uri;
-      }
-      return undefined;
-    } catch {
-      return undefined;
-    }
-  }
 
   async function onSubmit(formData: any) {
     try {
       const usuario = new Usuario(
         formData.nome,
         formData.email,
-        formData.fotoUrl,
+        urlDevice || formData.fotoUrl,
         formData.senha
       );
       await cadastrar(usuario.toFirestore());
@@ -68,15 +51,37 @@ const SignUp = () => {
               {
                 text: "Galeria",
                 onPress: async () => {
-                  const result = await tiraFotoOuGaleria("galeria");
-                  if (result) setAvatarUri(result);
+                  try {
+                    const result = await buscaNaGaleria();
+                    if (
+                      !result.canceled &&
+                      result.assets &&
+                      result.assets.length > 0
+                    ) {
+                      const uri = result.assets[0].uri;
+                      setUrlDevice(uri);
+                    }
+                  } catch (error) {
+                    console.error("Erro ao obter imagem da galeria:", error);
+                  }
                 },
               },
               {
                 text: "Tirar foto",
                 onPress: async () => {
-                  const result = await tiraFotoOuGaleria("camera");
-                  if (result) setAvatarUri(result);
+                  try {
+                    const result = await tiraFoto();
+                    if (
+                      !result.canceled &&
+                      result.assets &&
+                      result.assets.length > 0
+                    ) {
+                      const uri = result.assets[0].uri;
+                      setUrlDevice(uri);
+                    }
+                  } catch (error) {
+                    console.error("Erro ao tirar foto:", error);
+                  }
                 },
               },
               { text: "Cancelar", style: "cancel" },
@@ -84,8 +89,8 @@ const SignUp = () => {
           }}
           activeOpacity={0.7}
         >
-          {avatarUri ? (
-            <Image style={styles.logo} source={{ uri: avatarUri }} />
+          {urlDevice ? (
+            <Image style={styles.logo} source={{ uri: urlDevice }} />
           ) : (
             <Image style={styles.logo} source={require("@/assets/folha.png")} />
           )}

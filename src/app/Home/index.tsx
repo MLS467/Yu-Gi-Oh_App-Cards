@@ -22,38 +22,64 @@ const Home = () => {
         <View
           style={{
             flexDirection: "row",
-            justifyContent: "center",
+            justifyContent: "space-between",
             alignItems: "center",
             marginBottom: 8,
           }}
         >
-          <Text style={styles.title}>Lista de Cartas</Text>
-          <Text
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={styles.title}>Lista de Cartas</Text>
+            <Text
+              style={{
+                marginLeft: 10,
+                fontSize: 24,
+                color: colors.primary.alt1,
+                fontFamily: "YugiOh",
+              }}
+            >
+              Yu-Gi-Oh
+            </Text>
+          </View>
+          <View
             style={{
-              marginLeft: 10,
-              fontSize: 24,
-              color: colors.primary.alt1,
-              fontFamily: "YugiOh",
+              width: 40,
+              height: 40,
+              borderRadius: 20,
+              backgroundColor: "#eee",
+              justifyContent: "center",
+              alignItems: "center",
+              overflow: "hidden",
             }}
           >
-            Yu-Gi-Oh
-          </Text>
+            {/* Troque require pela sua imagem de perfil, se tiver */}
+            <MaterialIcons name="person" size={28} color="#888" />
+          </View>
         </View>
-        <TextInput
-          label="Pesquisar carta"
-          value={search}
-          onChangeText={setSearch}
-          mode="outlined"
-          style={{ marginVertical: 8 }}
-          placeholder="Digite o nome da carta..."
-          left={
-            <TextInput.Icon
-              icon={() => (
-                <MaterialIcons name="search" size={22} color="#888" />
-              )}
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <View style={{ flex: 1 }}>
+            <TextInput
+              label="Pesquisar carta"
+              value={search}
+              onChangeText={setSearch}
+              mode="outlined"
+              style={{ marginVertical: 8 }}
+              placeholder="Digite o nome da carta..."
+              left={
+                <TextInput.Icon
+                  icon={() => (
+                    <MaterialIcons name="search" size={20} color="#888" />
+                  )}
+                />
+              }
             />
-          }
-        />
+          </View>
+        </View>
       </View>
       <View style={[styles.cardContainer, { alignItems: "center" }]}>
         <FlatList

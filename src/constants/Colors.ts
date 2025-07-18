@@ -6,8 +6,8 @@ export const colors = {
     400: "#ced4da",
     500: "#adb5bd",
     600: "#6c757d",
-    700: "#495057",
-    800: "#212529", // fundo principal (grafite/azul escuro)
+    700: "#181d25",
+    800: "#0f1319", // fundo principal (grafite/azul escuro)
     900: "#1a1d20",
     950: "#121417", // ainda mais escuro
   },
@@ -22,6 +22,9 @@ export const colors = {
     800: "#777777",
     900: "#555555",
     950: "#333333",
+  },
+  borderYU: {
+    100: "#2c323d",
   },
   primary: {
     default: "#b22222", // Vermelho escuro (Duel Monsters vibe)

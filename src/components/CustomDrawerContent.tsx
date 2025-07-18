@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: colors.dark[700],
+    borderBottomColor: colors.borderYU[100],
   },
   avatar: {
     backgroundColor: colors.primary.alt1,

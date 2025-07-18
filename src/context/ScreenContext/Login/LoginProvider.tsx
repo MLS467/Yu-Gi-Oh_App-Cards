@@ -1,6 +1,7 @@
 import { useAuth } from "@/Hook/useAuth";
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { Alert } from "react-native";
 import * as yup from "yup";
 import LoginContext from "./LoginContext";
 
@@ -35,11 +36,14 @@ const LoginProvider = ({ children }: any) => {
   const handleLogin = async ({ email, password }: LoginProps) => {
     try {
       await signIn(email, password);
-      showAlert("Login realizado com sucesso!");
-      router.replace("/Home");
-    } catch (error) {
+    } catch (error: any) {
+      const errorMessage =
+        typeof error === "object" && error !== null && "message" in error
+          ? String((error as { message?: unknown }).message)
+          : "Erro ao fazer login.";
+      Alert.alert("Erro", errorMessage);
+      alert(errorMessage); // EXCLUIR AQUI
       console.error("Error during sign-in:", error);
-      showAlert("Erro ao fazer login. Verifique suas credenciais.");
     }
   };
 

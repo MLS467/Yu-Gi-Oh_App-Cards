@@ -1,14 +1,13 @@
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as ImagePicker from "expo-image-picker";
-import { useForm } from "react-hook-form";
-import * as yup from "yup";
-import { SignUpContext } from "./SignUpContext";
-
 import { useAuth } from "@/Hook/useAuth";
 import { UsuarioType } from "@/model/User";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as ImagePicker from "expo-image-picker";
 import { doc, setDoc } from "firebase/firestore";
 import { ReactNode, useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
 import { db } from "../FireBaseContext/firebase.config/Auth";
+import { SignUpContext } from "./SignUpContext";
 
 const requiredMessage = "Campo obrigatório";
 
@@ -130,6 +129,7 @@ const SignUpProvider = ({ children }: { children: ReactNode }) => {
         tiraFoto,
         buscaNaGaleria,
         urlDevice,
+        setUrlDevice,
         formState: { errors },
         reset,
       }}
