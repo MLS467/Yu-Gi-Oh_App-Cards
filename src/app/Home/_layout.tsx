@@ -14,6 +14,7 @@ const Layout = () => {
         <Drawer
           drawerContent={(props) => <CustomDrawerContent {...props} />}
           screenOptions={({ navigation }) => ({
+            headerShown: false,
             drawerStyle: {
               backgroundColor: colors.dark[800],
               width: "70%",
@@ -27,7 +28,6 @@ const Layout = () => {
               alignItems: "center",
             },
             headerTintColor: colors.light[200],
-
             headerTitle: "",
             headerTitleAlign: "left",
             drawerActiveBackgroundColor: colors.primary.default,
