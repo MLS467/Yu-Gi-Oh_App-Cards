@@ -1,5 +1,7 @@
+import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
 import { useAuth } from "@/Hook/useAuth";
 import { useRouter } from "expo-router";
+import { sendPasswordResetEmail } from "firebase/auth";
 import { useState } from "react";
 import { Alert } from "react-native";
 import * as yup from "yup";
@@ -15,11 +17,6 @@ const LoginProvider = ({ children }: any) => {
   type LoginProps = {
     email: string;
     password: string;
-  };
-
-  const showAlert = (msg: string) => {
-    setMessage(msg);
-    setVisible(true);
   };
 
   const schema = yup.object({
@@ -47,6 +44,35 @@ const LoginProvider = ({ children }: any) => {
     }
   };
 
+  const emailSchema = yup.object({
+    email: yup
+      .string()
+      .required("E-mail é obrigatório")
+      .email("Formato de e-mail inválido"),
+  });
+
+  const handleForgotPassword = async (email: string) => {
+    try {
+      await emailSchema.validate({ email });
+
+      await sendPasswordResetEmail(auth, email);
+      Alert.alert(
+        "Sucesso",
+        "Um link de redefinição foi enviado ao seu e-mail."
+      );
+    } catch (error: any) {
+      if (error.name === "ValidationError") {
+        Alert.alert("Erro de validação", error.message);
+      } else {
+        console.error(error);
+        Alert.alert(
+          "Erro",
+          "Não foi possível enviar o e-mail. Verifique o endereço."
+        );
+      }
+    }
+  };
+
   return (
     <LoginContext.Provider
       value={{
@@ -58,6 +84,7 @@ const LoginProvider = ({ children }: any) => {
         setVisible,
         message,
         schema,
+        handleForgotPassword,
       }}
     >
       {children}

@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.dark[700],
     borderBottomWidth: 1,
     borderBottomColor: colors.borderYU[100],
-    paddingHorizontal: 10, // evita encostar nas bordas
-    zIndex: 1000, // para ficar acima dos outros
+    paddingHorizontal: 10,
+    zIndex: 1000, 
   },
 });
 

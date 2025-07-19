@@ -1,11 +1,14 @@
 import { styles } from "@/app/styles";
+import ForgotPasswordModal from "@/components/ForgotPassword";
+import SeparatorWithText from "@/components/separate";
 import { colors } from "@/constants/Colors";
 import { useLogin } from "@/Hook/useLogin";
 import { yupResolver } from "@hookform/resolvers/yup";
-import React from "react";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Image, Text, TouchableOpacity, View } from "react-native";
-import { Button, Snackbar, TextInput } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 
 type FormData = {
   email: string;
@@ -13,6 +16,8 @@ type FormData = {
 };
 
 const Login = () => {
+  const [visivel, setVisivel] = useState(false);
+  const [checked, setChecked] = useState(false);
   const context = useLogin();
   const {
     handleLogin,
@@ -23,6 +28,7 @@ const Login = () => {
     setVisible,
     message,
     urlDevice,
+    handleForgotPassword,
     schema,
   }: any = context;
 
@@ -61,11 +67,21 @@ const Login = () => {
           source={
             urlDevice ? { uri: urlDevice } : require("@/assets/folha.png")
           }
+          resizeMode="cover"
         />
       </View>
 
       <View style={styles.form}>
-        <Text style={styles.title}>Login</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Login</Text>
+
+          <LinearGradient
+            colors={["#FF0000", "#FFD700"]} // Vermelho para amarelo
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+            style={styles.gradientLine}
+          />
+        </View>
 
         <Controller
           control={control}
@@ -79,12 +95,12 @@ const Login = () => {
           }}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label="email"
+              label="Digite seu e-mail"
               value={value}
               onChangeText={onChange}
               autoCapitalize="none"
               mode="outlined"
-              style={{ margin: 16 }}
+              style={{ marginVertical: 15, marginHorizontal: 16 }}
               error={!!errors.email}
             />
           )}
@@ -101,13 +117,13 @@ const Login = () => {
           rules={{ required: "Senha é obrigatória" }}
           render={({ field: { onChange, value } }) => (
             <TextInput
-              label="Senha"
+              label="Digite sua senha"
               value={value}
               onChangeText={onChange}
               mode="outlined"
               autoCapitalize="none"
               secureTextEntry={!passwordVisible}
-              style={{ margin: 16 }}
+              style={{ marginVertical: 15, marginHorizontal: 16 }}
               error={!!errors.password}
               right={
                 <TextInput.Icon
@@ -124,40 +140,73 @@ const Login = () => {
           </Text>
         )}
 
-        <Button
-          mode="contained"
-          onPress={handleSubmit(onSubmit)}
-          style={{ ...styles.button, margin: 16 }}
-        >
-          <Text style={styles.textBtn}>Entrar</Text>
-        </Button>
+        <View style={styles.forgotPasswordContainer}>
+          <View style={styles.containerCheck}>
+            <TouchableOpacity
+              style={[
+                styles.checkboxBaseCheck,
+                checked && styles.checkboxCheckedCheck,
+              ]}
+              onPress={() => setChecked(!checked)}
+            >
+              {checked && <Text style={styles.checkmarkCheck}>✓</Text>}
+            </TouchableOpacity>
+            <Text style={styles.labelCheck}>Lembrar de mim</Text>
+          </View>
+
+          <TouchableOpacity
+            onPress={() => setVisivel(true)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.forgotPasswordText}>Esqueceu a senha?</Text>
+          </TouchableOpacity>
+        </View>
+
+        {visivel && (
+          <>
+            <ForgotPasswordModal
+              visible={visivel}
+              onClose={() => setVisivel(false)}
+              sendEmail={(email) => handleForgotPassword(email)}
+            />
+          </>
+        )}
+
+        <View style={styles.btnContainer}>
+          <Button
+            mode="contained"
+            onPress={handleSubmit(onSubmit)}
+            style={{
+              ...styles.button,
+              margin: 5,
+              borderColor: colors.primary.alt1,
+              borderWidth: 1,
+            }}
+          >
+            <Text style={styles.textBtn}>Entrar</Text>
+          </Button>
+
+          <SeparatorWithText />
+
+          <Button
+            mode="contained"
+            onPress={() => router.navigate("/Sign-Up")}
+            style={{
+              ...styles.button,
+              margin: 5,
+              backgroundColor: colors.dark[800],
+              borderWidth: 1,
+              borderColor: colors.primary.alt1,
+            }}
+          >
+            <Text style={{ ...styles.textBtn, color: colors.primary.alt1 }}>
+              Cadastrar-se
+            </Text>
+          </Button>
+        </View>
       </View>
-
-      <TouchableOpacity
-        onPress={() => router.navigate("/Sign-Up")}
-        activeOpacity={0.7}
-        style={styles.btnRegister}
-      >
-        <Text style={styles.textRegister}>
-          Não tem uma conta?{" "}
-          <Text style={{ color: colors.light[200] }}>Cadastre-se</Text>
-        </Text>
-      </TouchableOpacity>
-
-      <Snackbar
-        visible={visible}
-        onDismiss={() => setVisible(false)}
-        duration={3000}
-        action={{
-          label: "Fechar",
-          onPress: () => setVisible(false),
-        }}
-        style={{ backgroundColor: "#2561D9" }} // você pode mudar a cor
-      >
-        {message}
-      </Snackbar>
     </View>
   );
 };
-
+//
 export default Login;

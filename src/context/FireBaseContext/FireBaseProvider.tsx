@@ -63,7 +63,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         );
       }
 
-      Alert.alert("Login realizado com sucesso!");
       router.replace("/Home");
     } catch (error: any) {
       throw error;
