@@ -100,7 +100,7 @@ const Login = () => {
               onChangeText={onChange}
               autoCapitalize="none"
               mode="outlined"
-              style={{ marginVertical: 15, marginHorizontal: 16 }}
+              style={{ marginVertical: 10, marginHorizontal: 16 }}
               error={!!errors.email}
             />
           )}
@@ -123,7 +123,7 @@ const Login = () => {
               mode="outlined"
               autoCapitalize="none"
               secureTextEntry={!passwordVisible}
-              style={{ marginVertical: 15, marginHorizontal: 16 }}
+              style={{ marginVertical: 10, marginHorizontal: 16 }}
               error={!!errors.password}
               right={
                 <TextInput.Icon
@@ -178,7 +178,6 @@ const Login = () => {
             onPress={handleSubmit(onSubmit)}
             style={{
               ...styles.button,
-              margin: 5,
               borderColor: colors.primary.alt1,
               borderWidth: 1,
             }}
@@ -193,7 +192,6 @@ const Login = () => {
             onPress={() => router.navigate("/Sign-Up")}
             style={{
               ...styles.button,
-              margin: 5,
               backgroundColor: colors.dark[800],
               borderWidth: 1,
               borderColor: colors.primary.alt1,

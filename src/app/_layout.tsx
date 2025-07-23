@@ -4,6 +4,7 @@ import CrudProvider from "@/context/Crud/CrudProvider";
 import { AuthProvider } from "@/context/FireBaseContext/FireBaseProvider";
 import { HomeProvider } from "@/context/HomeContext/HomeContext";
 import LoginProvider from "@/context/ScreenContext/Login/LoginProvider";
+import { UserProvider } from "@/context/ScreenContext/userContext";
 import SignUpProvider from "@/context/SignUpContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { useAuth } from "@/Hook/useAuth";
@@ -40,22 +41,19 @@ const AppNavigator = () => {
       }}
     >
       {!user ? (
-        //  ROTAS PÚBLICAS (usuário não logado)
+        // ROTAS PÚBLICAS (usuário não logado)
         <>
           <Stack.Screen name="index" options={{ headerShown: false }} />
-
           <Stack.Screen name="Sign-Up/index" options={{ headerShown: false }} />
         </>
       ) : (
         // ROTAS PROTEGIDAS (usuário logado)
         <>
           <Stack.Screen name="Home/index" options={{ headerShown: false }} />
-
           <Stack.Screen
             name="Home/cardDetails/[id]"
             options={{ headerShown: false }}
           />
-
           <Stack.Screen
             name="Home/myDeck/detailsMyDeck/[id]"
             options={{ headerShown: false }}
@@ -68,24 +66,34 @@ const AppNavigator = () => {
 
 const RootLayout = () => {
   useEffect(() => {
+    // Impede que a tela de splash seja ocultada automaticamente
     SplashScreen.preventAutoHideAsync();
-    SplashScreen.hideAsync();
+
+    // Defina um intervalo para esconder a tela de splash após algum tempo
+    const timeout = setTimeout(() => {
+      SplashScreen.hideAsync(); // Esconde a splash screen após 2 segundos (ajuste conforme necessário)
+    }, 2000); // 2 segundos
+
+    // Limpeza do timeout para evitar memory leaks
+    return () => clearTimeout(timeout);
   }, []);
 
   return (
     <ThemeProvider>
       <SafeAreaView style={{ flex: 1 }}>
-        <AuthProvider>
-          <LoginProvider>
-            <CrudProvider>
-              <HomeProvider>
-                <SignUpProvider>
-                  <AppNavigator />
-                </SignUpProvider>
-              </HomeProvider>
-            </CrudProvider>
-          </LoginProvider>
-        </AuthProvider>
+        <UserProvider>
+          <AuthProvider>
+            <LoginProvider>
+              <CrudProvider>
+                <HomeProvider>
+                  <SignUpProvider>
+                    <AppNavigator />
+                  </SignUpProvider>
+                </HomeProvider>
+              </CrudProvider>
+            </LoginProvider>
+          </AuthProvider>
+        </UserProvider>
       </SafeAreaView>
     </ThemeProvider>
   );

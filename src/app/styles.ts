@@ -57,13 +57,13 @@ const styles = StyleSheet.create({
   },
   btnContainer: {
     width: "90%",
-    marginVertical: 10,
     marginHorizontal: "auto",
+    marginTop: 20,
   },
   button: {
     borderRadius: 5,
     width: "100%",
-    marginVertical: 10,
+    // marginVertical: 10,
     marginHorizontal: "auto",
   },
   textBtn: {

@@ -1,4 +1,5 @@
 import { useAuth } from "@/Hook/useAuth";
+import useUser from "@/Hook/useUser";
 import { UsuarioType } from "@/model/User";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as ImagePicker from "expo-image-picker";
@@ -37,6 +38,8 @@ const schema = yup
   .required();
 
 const SignUpProvider = ({ children }: { children: ReactNode }) => {
+  const { sendImageToStorage } = useUser();
+
   const {
     control,
     handleSubmit,
@@ -95,12 +98,21 @@ const SignUpProvider = ({ children }: { children: ReactNode }) => {
         throw new Error("Erro ao obter UID do usuário.");
       }
 
+      let urlImagem = "";
+
+      if (data.fotoUrl) {
+        const urlStorage = await sendImageToStorage(data.fotoUrl, uid); // aqui
+        if (urlStorage) {
+          urlImagem = urlStorage;
+        }
+      }
+
       // Agora salva os dados adicionais
       if (uid) {
         await setDoc(doc(db, "users", uid), {
           nome: data.nome,
           email: data.email,
-          fotoUrl: data.fotoUrl,
+          fotoUrl: urlImagem,
           criadoEm: new Date(),
         });
 
