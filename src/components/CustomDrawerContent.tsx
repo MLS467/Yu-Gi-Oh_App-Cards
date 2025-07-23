@@ -6,37 +6,56 @@ import {
   DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+
+import { UserContext } from "@/context/ScreenContext/userContext";
 import type { DrawerContentComponentProps } from "@react-navigation/drawer";
 import { useRouter } from "expo-router";
-import { getAuth } from "firebase/auth";
+import { useContext } from "react";
 
 export default function CustomDrawerContent(
   props: DrawerContentComponentProps
 ) {
+  const { userData } = useContext(UserContext);
   const navigation = useRouter();
 
-  const auth = getAuth();
-  const user = auth.currentUser;
-
   const navUser = () => {
-    navigation.navigate(`/user/${user?.uid || "defaultUserId"}`);
+    navigation.navigate(`/user/${userData?.uid || "defaultUserId"}`);
   };
+
+  console.log("userData:", userData);
 
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
       {/* Topo */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={navUser}>
+        <TouchableOpacity
+          onPress={navUser}
+          style={{ flexDirection: "row", alignItems: "center" }}
+        >
           <View style={styles.avatar}>
-            {/* manuelle--- */}
-            <Text style={styles.avatarText}>YG</Text>
+            {userData.fotoUrl ? (
+              <Image
+                source={{ uri: userData.fotoUrl }}
+                style={{ width: 40, height: 40, borderRadius: 20 }}
+              />
+            ) : (
+              <Text style={styles.avatarText}>
+                {userData.nome ? userData.nome.charAt(0) : "?"}
+              </Text>
+            )}
           </View>
+          <Text
+            style={{
+              marginLeft: 10,
+              color: colors.light[100],
+              fontWeight: "bold",
+            }}
+          >
+            {userData.nome || "Usuário"}
+          </Text>
         </TouchableOpacity>
-        <Text style={styles.logoText}>
-          Yu-Gi-<Text style={{ color: colors.primary.alt1 }}>Oh!</Text>
-        </Text>
       </View>
 
       {/* Navegação */}

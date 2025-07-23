@@ -1,11 +1,52 @@
 import { storage } from "@/context/FireBaseContext/firebase.config/Auth";
 import * as ImageManipulator from "expo-image-manipulator";
+import { getAuth, onAuthStateChanged, User } from "firebase/auth";
+import { doc, getDoc, getFirestore } from "firebase/firestore";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { createContext } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const UserContext = createContext<any>({});
 
 export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [userData, setUserData] = useState<{
+    nome?: string;
+    fotoUrl?: string;
+    uid?: string;
+  }>({});
+
+  // Listener para mudanças de autenticação
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      setUser(firebaseUser);
+    });
+    return unsubscribe;
+  }, []);
+
+  // Busca dados do usuário sempre que o user mudar
+  useEffect(() => {
+    const fetchUserData = async () => {
+      if (user?.uid) {
+        const db = getFirestore();
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+        if (userSnap.exists()) {
+          setUserData({ ...userSnap.data(), uid: user.uid } as {
+            nome?: string;
+            fotoUrl?: string;
+            uid?: string;
+          });
+        } else {
+          setUserData({});
+        }
+      } else {
+        setUserData({});
+      }
+    };
+    fetchUserData();
+  }, [user]);
+
   //Função utilitário para envio de imagens para o serviço de Storage
   //urlDevice: qual imagem que está no device que deve ser enviada via upload
   async function sendImageToStorage(
@@ -39,7 +80,12 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <UserContext.Provider value={{ sendImageToStorage }}>
+    <UserContext.Provider
+      value={{
+        sendImageToStorage,
+        userData,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
