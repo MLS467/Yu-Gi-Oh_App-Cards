@@ -1,11 +1,13 @@
 import { styles } from "@/app/styles";
 import ForgotPasswordModal from "@/components/ForgotPassword";
 import SeparatorWithText from "@/components/separate";
+import YugiohLoading from "@/components/YugiohLoading";
 import { colors } from "@/constants/Colors";
 import { useLogin } from "@/Hook/useLogin";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useState } from "react";
+import * as SecureStore from "expo-secure-store";
+import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { Button, TextInput } from "react-native-paper";
@@ -18,6 +20,7 @@ type FormData = {
 const Login = () => {
   const [visivel, setVisivel] = useState(false);
   const [checked, setChecked] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const context = useLogin();
   const {
@@ -46,6 +49,24 @@ const Login = () => {
     },
   });
 
+  useEffect(() => {
+    async function verificaCredenciais() {
+      const credencial = await SecureStore.getItemAsync("credencial");
+      if (credencial) {
+        const { email, senha } = JSON.parse(credencial);
+        try {
+          await handleLogin({ email, password: senha });
+          // Se quiser navegar para outra tela, use router.replace("/home") aqui
+          // router.replace("/home");
+        } catch (error) {
+          await SecureStore.deleteItemAsync("credencial");
+        }
+      }
+      setLoading(false);
+    }
+    verificaCredenciais();
+  }, []);
+
   const onSubmit = async (data: FormData) => {
     try {
       const user = {
@@ -54,11 +75,25 @@ const Login = () => {
       };
 
       await handleLogin(user);
+
+      if (checked) {
+        await SecureStore.setItemAsync(
+          "credencial",
+          JSON.stringify({ email: user.email, senha: user.password })
+        );
+      } else {
+        await SecureStore.deleteItemAsync("credencial");
+      }
+
       reset();
     } catch (error) {
       console.error("Erro ao fazer login:", error);
     }
   };
+
+  if (loading) {
+    return <YugiohLoading />;
+  }
 
   return (
     <View style={styles.container}>
