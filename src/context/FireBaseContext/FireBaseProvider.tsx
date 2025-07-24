@@ -29,6 +29,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setLoading(true);
       await firebaseSignOut(auth);
       Alert.alert("Logout", "Logout realizado com sucesso!");
+      router.replace("/");
     } catch (error: any) {
       console.error("Error during sign-out:", error);
       Alert.alert("Erro", "Erro ao fazer logout.");

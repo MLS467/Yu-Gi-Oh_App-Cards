@@ -18,10 +18,6 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const AppNavigator = () => {
   const { user, loading } = useAuth();
 
-  if (loading) {
-    return <YugiohLoading />;
-  }
-
   return (
     <Stack
       screenOptions={{

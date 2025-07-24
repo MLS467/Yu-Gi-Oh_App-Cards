@@ -3,10 +3,19 @@ import Header from "@/components/Header";
 import YugiohLoading from "@/components/YugiohLoading";
 import { colors } from "@/constants/Colors";
 import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
+import { sendNotification } from "@/utils/SendNotification";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "expo-router";
-import React, { useCallback, useRef, useState } from "react";
-import { Alert, FlatList, SafeAreaView, Text, View } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import {
+  Alert,
+  FlatList,
+  LogBox,
+  SafeAreaView,
+  Text,
+  View,
+} from "react-native";
 import { Button } from "react-native-paper";
 import DeckCard from "./DeckCard";
 import { styles } from "./style";
@@ -21,6 +30,22 @@ interface FavoriteCard {
   favoritadoEm: any;
 }
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
+  }),
+});
+
+LogBox.ignoreLogs([
+  "No Expo Push Token",
+  "PushNotification",
+  "Remote notifications",
+]);
+
 const MyDeck = () => {
   const { crud }: any = UseCrud();
   const user = auth.currentUser;
@@ -28,6 +53,23 @@ const MyDeck = () => {
   const [loading, setLoading] = useState(false);
   const [favoriteCards, setFavoriteCards] = useState<FavoriteCard[]>([]);
   const isLoadingRef = useRef(false);
+
+  async function registerForPushNotificationsAsync() {
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permissão de notificação negada!");
+    }
+  }
+
+  useEffect(() => {
+    registerForPushNotificationsAsync();
+  }, []);
+
+  useEffect(() => {
+    if (favoriteCards.length === 0) {
+      sendNotification();
+    }
+  }, [favoriteCards]);
 
   // Usando useRef para controlar o estado de loading sem causar re-renderização
   const fetchFavoriteCards = useCallback(async () => {
@@ -40,6 +82,10 @@ const MyDeck = () => {
     if (isLoadingRef.current) {
       console.log("Já está carregando, ignorando nova chamada");
       return;
+    }
+
+    if (loading) {
+      return <YugiohLoading />;
     }
 
     // Define o estado de loading
@@ -176,6 +222,7 @@ const MyDeck = () => {
       >
         Meu Deck de Cartas
       </Text>
+
       {favoriteCards.length > 0 ? (
         <FlatList
           data={favoriteCards}
