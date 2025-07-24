@@ -2,12 +2,14 @@ import { UseCrud } from "@/Hook/useCrud";
 import Header from "@/components/Header";
 import YugiohLoading from "@/components/YugiohLoading";
 import { colors } from "@/constants/Colors";
-import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
+import { auth, db } from "@/context/FireBaseContext/firebase.config/Auth";
+
 import { sendNotification } from "@/utils/SendNotification";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Notifications from "expo-notifications";
 import { useFocusEffect } from "expo-router";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Controller, useForm } from "react-hook-form";
 import {
   Alert,
   FlatList,
@@ -16,8 +18,18 @@ import {
   Text,
   View,
 } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, TextInput } from "react-native-paper";
 import DeckCard from "./DeckCard";
+// Função fora do componente para buscar cartas pelo nome na coleção favoriteCards
+import {
+  collection,
+  endAt,
+  getDocs,
+  orderBy,
+  query,
+  startAt,
+} from "firebase/firestore";
+
 import { styles } from "./style";
 
 interface FavoriteCard {
@@ -48,6 +60,9 @@ LogBox.ignoreLogs([
 ]);
 
 const MyDeck = () => {
+  const { control, handleSubmit, getValues } = useForm({
+    defaultValues: { search: "" },
+  });
   const { crud }: any = UseCrud();
   const user = auth.currentUser;
   const notifiedRef = useRef(false);
@@ -198,6 +213,54 @@ const MyDeck = () => {
     }
   };
 
+  async function filterCard(cardName: string) {
+    try {
+      let data: FavoriteCard[] = [];
+
+      // 👉 Garante que o termo vai com aspas duplas, mesmo se o usuário digitar sem
+      const nameWithQuotes = `"${cardName.trim()}"`;
+
+      const ref = collection(db, "favoriteCards");
+      const q = query(
+        ref,
+        orderBy("cardName"),
+        startAt(nameWithQuotes),
+        endAt(nameWithQuotes + "\uf8ff")
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        data.push({
+          id: doc.id,
+          userId: doc.data().userId,
+          cardId: doc.data().cardId,
+          cardName: doc.data().cardName,
+          cardImage: doc.data().cardImage,
+          notes: doc.data().notes,
+          favoritadoEm: doc.data().favoritadoEm,
+        });
+      });
+
+      if (data.length > 0) {
+        setFavoriteCards(data);
+        Alert.alert(
+          "Cartas encontradas",
+          data.map((c) => c.cardName).join(", ")
+        );
+      } else {
+        setFavoriteCards([]);
+        Alert.alert("Nenhuma carta encontrada");
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error("Error em filterCard: ", error?.message, error);
+      Alert.alert("Erro ao buscar cartas", error?.message || "");
+      return [];
+    }
+  }
+
   const renderItem = ({ item }: { item: FavoriteCard }) => (
     <DeckCard
       id={item.cardId}
@@ -228,6 +291,31 @@ const MyDeck = () => {
       >
         Meu Deck de Cartas
       </Text>
+
+      <View style={{ width: "90%", alignSelf: "center", marginBottom: 16 }}>
+        <Controller
+          control={control}
+          name="search"
+          render={({ field: { onChange, value } }) => (
+            <TextInput
+              label="Pesquisar carta"
+              value={value}
+              onChangeText={onChange}
+              mode="outlined"
+              style={{ marginTop: 8, marginBottom: 16 }}
+              placeholder="Digite o nome da carta..."
+              left={
+                <TextInput.Icon
+                  icon={() => (
+                    <MaterialIcons name="search" size={20} color="#888" />
+                  )}
+                  onPress={() => filterCard(getValues("search"))}
+                />
+              }
+            />
+          )}
+        />
+      </View>
 
       {favoriteCards.length > 0 ? (
         <FlatList
