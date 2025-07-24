@@ -44,12 +44,13 @@ LogBox.ignoreLogs([
   "No Expo Push Token",
   "PushNotification",
   "Remote notifications",
+  "expo-notifications: Android Push notifications (remote notifications) functionality provided by expo-notifications was removed from Expo Go with the release of SDK 53. Use a development build instead of Expo Go. Read more at https://docs.expo.dev/develop/development-builds/introduction/.",
 ]);
 
 const MyDeck = () => {
   const { crud }: any = UseCrud();
   const user = auth.currentUser;
-
+  const notifiedRef = useRef(false);
   const [loading, setLoading] = useState(false);
   const [favoriteCards, setFavoriteCards] = useState<FavoriteCard[]>([]);
   const isLoadingRef = useRef(false);
@@ -66,8 +67,13 @@ const MyDeck = () => {
   }, []);
 
   useEffect(() => {
-    if (favoriteCards.length === 0) {
+    if (favoriteCards.length === 0 && !notifiedRef.current) {
       sendNotification();
+      notifiedRef.current = true;
+    }
+    // Se adicionar cartas, reseta o controle
+    if (favoriteCards.length > 0) {
+      notifiedRef.current = false;
     }
   }, [favoriteCards]);
 
