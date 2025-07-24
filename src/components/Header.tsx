@@ -1,9 +1,17 @@
 import { colors } from "@/constants/Colors";
+import { UserContext } from "@/context/ScreenContext/userContext";
 import { MaterialIcons } from "@expo/vector-icons";
 import { DrawerToggleButton } from "@react-navigation/drawer";
-import { Image, StyleSheet, View } from "react-native";
+import { useRouter } from "expo-router";
+import { useContext } from "react";
+import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const Header = () => {
+  const { userData } = useContext(UserContext);
+  const navigation = useRouter();
+  const navUser = () => {
+    navigation.navigate(`/user/${userData?.uid || "defaultUserId"}`);
+  };
   return (
     <View style={styles.headerContainer}>
       <View>
@@ -16,7 +24,9 @@ const Header = () => {
           resizeMode="cover"
         />
       </View>
-      <View
+      <TouchableOpacity
+        onPress={navUser}
+        activeOpacity={0.7}
         style={{
           width: 40,
           height: 40,
@@ -27,9 +37,16 @@ const Header = () => {
           overflow: "hidden",
         }}
       >
-        {/* Troque require pela sua imagem de perfil, se tiver */}
-        <MaterialIcons name="person" size={28} color={colors.light[100]} />
-      </View>
+        {userData && userData.fotoUrl ? (
+          <Image
+            source={{ uri: userData.fotoUrl }}
+            style={{ width: 40, height: 40, borderRadius: 20 }}
+            resizeMode="cover"
+          />
+        ) : (
+          <MaterialIcons name="person" size={28} color={colors.light[100]} />
+        )}
+      </TouchableOpacity>
     </View>
   );
 };
@@ -46,7 +63,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.borderYU[100],
     paddingHorizontal: 10,
-    zIndex: 1000, 
+    zIndex: 1000,
   },
 });
 

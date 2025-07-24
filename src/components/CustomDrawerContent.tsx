@@ -24,8 +24,6 @@ export default function CustomDrawerContent(
     navigation.navigate(`/user/${userData?.uid || "defaultUserId"}`);
   };
 
-  console.log("userData:", userData);
-
   return (
     <DrawerContentScrollView {...props} contentContainerStyle={{ flex: 1 }}>
       {/* Topo */}
