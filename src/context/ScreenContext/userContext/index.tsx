@@ -24,26 +24,27 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     return unsubscribe;
   }, []);
 
-  // Busca dados do usuário sempre que o user mudar
-  useEffect(() => {
-    const fetchUserData = async () => {
-      if (user?.uid) {
-        const db = getFirestore();
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-        if (userSnap.exists()) {
-          setUserData({ ...userSnap.data(), uid: user.uid } as {
-            nome?: string;
-            fotoUrl?: string;
-            uid?: string;
-          });
-        } else {
-          setUserData({});
-        }
+  const fetchUserData = async () => {
+    if (user?.uid) {
+      const db = getFirestore();
+      const userRef = doc(db, "users", user.uid);
+      const userSnap = await getDoc(userRef);
+      if (userSnap.exists()) {
+        setUserData({ ...userSnap.data(), uid: user.uid } as {
+          nome?: string;
+          fotoUrl?: string;
+          uid?: string;
+        });
       } else {
         setUserData({});
       }
-    };
+    } else {
+      setUserData({});
+    }
+  };
+
+  // Busca dados do usuário sempre que o user mudar
+  useEffect(() => {
     fetchUserData();
   }, [user]);
 
@@ -84,6 +85,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       value={{
         sendImageToStorage,
         userData,
+        refreshUserData: fetchUserData,
       }}
     >
       {children}

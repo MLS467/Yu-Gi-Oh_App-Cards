@@ -1,4 +1,5 @@
 import { db } from "@/context/FireBaseContext/firebase.config/Auth";
+import { UserContext } from "@/context/ScreenContext/userContext";
 import * as ImagePicker from "expo-image-picker";
 import { useFocusEffect, useLocalSearchParams, useRouter } from "expo-router";
 import { deleteUser, getAuth } from "firebase/auth";
@@ -9,7 +10,8 @@ import {
   getFirestore,
   updateDoc,
 } from "firebase/firestore";
-import React, { useState } from "react";
+import { deleteObject, getStorage, ref } from "firebase/storage";
+import React, { useContext, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
@@ -97,13 +99,43 @@ const UserScreen = () => {
     }
   }
 
+  const { sendImageToStorage, refreshUserData } = useContext(UserContext);
   const handleEdit = async () => {
     try {
       setLoading(true);
       const userRef = doc(db, "users", id);
-      await updateDoc(userRef, form);
+      const storage = getStorage();
+
+      let newFotoUrl = form.fotoUrl;
+
+      // Se há nova imagem (urlDevice), faz upload e atualiza fotoUrl
+      if (urlDevice) {
+        // Exclui foto antiga se existir
+        if (form.fotoUrl) {
+          try {
+            const oldRefPath = decodeURIComponent(
+              form.fotoUrl.split("/").slice(3).join("/").split("?")[0]
+            );
+            const oldRef = ref(storage, oldRefPath);
+            await deleteObject(oldRef);
+          } catch (e) {
+            console.log("Erro ao excluir foto antiga:", e);
+          }
+        }
+        // Envia nova imagem comprimida usando função do contexto
+        newFotoUrl = await sendImageToStorage(urlDevice, id);
+      }
+
+      // Atualiza dados do usuário
+      await updateDoc(userRef, {
+        nome: form.nome,
+        email: form.email,
+        fotoUrl: newFotoUrl,
+      });
+      await refreshUserData();
       Alert.alert("Sucesso", "Usuário atualizado!");
       setEditing(false);
+      setUrlDevice(undefined);
     } catch (error) {
       Alert.alert("Erro", "Não foi possível editar o usuário.");
     } finally {
@@ -183,17 +215,9 @@ const UserScreen = () => {
       <TextInput
         style={styles.input}
         value={form.email}
-        editable={editing}
-        onChangeText={(text) => setForm({ ...form, email: text })}
+        editable={false}
         placeholder="Email"
         keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        value={form.fotoUrl}
-        editable={editing}
-        onChangeText={(text) => setForm({ ...form, fotoUrl: text })}
-        placeholder="Foto URL"
       />
       <View style={styles.buttonRow}>
         {editing ? (

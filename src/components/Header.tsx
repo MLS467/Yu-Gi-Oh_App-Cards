@@ -8,10 +8,13 @@ import { Image, StyleSheet, TouchableOpacity, View } from "react-native";
 
 const Header = () => {
   const { userData } = useContext(UserContext);
+
   const navigation = useRouter();
+
   const navUser = () => {
     navigation.navigate(`/user/${userData?.uid || "defaultUserId"}`);
   };
+
   return (
     <View style={styles.headerContainer}>
       <View>
