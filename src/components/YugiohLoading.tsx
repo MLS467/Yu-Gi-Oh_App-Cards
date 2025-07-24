@@ -1,7 +1,7 @@
 // components/YugiohLoading.tsx
 import { colors } from "@/constants/Colors";
 import React, { useEffect, useRef } from "react";
-import { Animated, StyleSheet, View } from "react-native";
+import { Animated, Dimensions, StyleSheet, View } from "react-native";
 
 export default function YugiohLoading() {
   // Valor de rotação animado
@@ -25,20 +25,28 @@ export default function YugiohLoading() {
   return (
     <View style={styles.container}>
       <Animated.Image
-        source={require("@/assets/eye-of-anubis.png")} // 👈 Troque pelo seu arquivo PNG/SVG
+        source={require("@/assets/eye-of-anubis.png")}
         style={[styles.image, { transform: [{ rotate: spin }] }]}
         resizeMode="contain"
       />
+      <Animated.Text style={styles.text}>Carregando...</Animated.Text>
     </View>
   );
 }
+const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: colors.dark[900],
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width,
+    height,
+    backgroundColor: colors.dark[800],
     justifyContent: "center",
     alignItems: "center",
+    zIndex: 9999,
+    elevation: 20, // Para Android
   },
   image: {
     width: 120,
@@ -46,9 +54,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   text: {
-    color: colors.primary.alt1, // Dourado
+    color: colors.primary.alt1, // Usando a cor pedida
     fontSize: 20,
     fontWeight: "bold",
     letterSpacing: 2,
+    marginTop: 10,
   },
 });

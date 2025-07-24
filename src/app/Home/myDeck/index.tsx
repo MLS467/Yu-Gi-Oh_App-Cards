@@ -1,4 +1,5 @@
 import { UseCrud } from "@/Hook/useCrud";
+import Header from "@/components/Header";
 import YugiohLoading from "@/components/YugiohLoading";
 import { colors } from "@/constants/Colors";
 import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
@@ -162,6 +163,19 @@ const MyDeck = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Header />
+      <Text
+        style={{
+          fontSize: 24,
+          fontWeight: "bold",
+          color: colors.primary.alt1,
+          textAlign: "center",
+          marginTop: 65,
+          letterSpacing: 1.2,
+        }}
+      >
+        Meu Deck de Cartas
+      </Text>
       {favoriteCards.length > 0 ? (
         <FlatList
           data={favoriteCards}

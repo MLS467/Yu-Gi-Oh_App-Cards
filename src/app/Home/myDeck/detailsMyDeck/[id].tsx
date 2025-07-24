@@ -4,13 +4,7 @@ import { colors } from "@/constants/Colors";
 import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { useEffect, useState } from "react";
-import {
-    Alert,
-    Image,
-    Text,
-    TextInput,
-    View,
-} from "react-native";
+import { Alert, Image, Text, TextInput, View } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { styles } from "./style";
 

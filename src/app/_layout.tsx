@@ -12,20 +12,11 @@ import { useFonts } from "expo-font";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
-import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 // Componente que usa o contexto DENTRO do AuthProvider
 const AppNavigator = () => {
   const { user, loading } = useAuth();
-
-  const [fontsLoaded] = useFonts({
-    YugiOh: require("../../assets/font/matrix.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return <View />; // ou uma tela de loading
-  }
 
   if (loading) {
     return <YugiohLoading />;
@@ -65,18 +56,22 @@ const AppNavigator = () => {
 };
 
 const RootLayout = () => {
+  const [fontsLoaded] = useFonts({
+    YugiOh: require("../../assets/font/matrix.ttf"),
+  });
+
   useEffect(() => {
-    // Impede que a tela de splash seja ocultada automaticamente
     SplashScreen.preventAutoHideAsync();
-
-    // Defina um intervalo para esconder a tela de splash após algum tempo
     const timeout = setTimeout(() => {
-      SplashScreen.hideAsync(); // Esconde a splash screen após 2 segundos (ajuste conforme necessário)
-    }, 2000); // 2 segundos
-
-    // Limpeza do timeout para evitar memory leaks
+      SplashScreen.hideAsync();
+    }, 2000);
     return () => clearTimeout(timeout);
   }, []);
+
+  // Mostra loading enquanto a fonte não carrega
+  if (!fontsLoaded) {
+    return <YugiohLoading />;
+  }
 
   return (
     <ThemeProvider>

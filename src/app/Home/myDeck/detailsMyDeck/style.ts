@@ -4,12 +4,12 @@ import { colors } from "../../../../constants/Colors";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: colors.dark[900],
+    backgroundColor: colors.dark[800],
     padding: 16,
   },
 
   scrollContainer: {
-    paddingBottom: 40,
+    paddingBottom: 100,
   },
 
   cardTitle: {

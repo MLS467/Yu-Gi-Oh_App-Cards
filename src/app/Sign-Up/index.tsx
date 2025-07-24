@@ -92,7 +92,10 @@ const SignUp = () => {
           {urlDevice ? (
             <Image style={styles.logo} source={{ uri: urlDevice }} />
           ) : (
-            <Image style={styles.logo} source={require("@/assets/folha.png")} />
+            <Image
+              style={styles.logo}
+              source={require("@/assets/circle.jpg")}
+            />
           )}
           <Text style={styles.title}>Cadastro de Usuário</Text>
         </TouchableOpacity>

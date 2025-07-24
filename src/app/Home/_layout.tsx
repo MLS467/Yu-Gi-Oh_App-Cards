@@ -68,8 +68,8 @@ const Layout = () => {
           <Drawer.Screen
             name="myDeck/index"
             options={{
-              title: "My Deck",
-              headerShown: true,
+              title: "Meu Deck",
+              headerShown: false,
               headerTitleStyle: {
                 color: colors.light[200],
                 fontWeight: "bold",

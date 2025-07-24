@@ -1,4 +1,5 @@
 import { UseCrud } from "@/Hook/useCrud";
+import Header from "@/components/Header";
 import YugiohLoading from "@/components/YugiohLoading";
 import { auth } from "@/context/FireBaseContext/firebase.config/Auth";
 import { useLocalSearchParams } from "expo-router";
@@ -144,6 +145,7 @@ export default function CardDetailScreen() {
 
   return (
     <View style={styles.container}>
+      <Header />
       <ScrollView style={styles.scrollContainer}>
         <Text style={styles.cardTitle}>{carta.name}</Text>
 

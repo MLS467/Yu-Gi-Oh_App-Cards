@@ -31,6 +31,7 @@ export const styles = StyleSheet.create({
     textAlign: "center",
   },
   cardsContainer: {
+    paddingTop: 60,
     paddingBottom: 20,
   },
   emptyContainer: {
@@ -64,8 +65,8 @@ export const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   columnWrapper: {
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
     paddingHorizontal: 8,
-    width: '100%',
+    width: "100%",
   },
 });
